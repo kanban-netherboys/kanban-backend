@@ -34,9 +34,15 @@ namespace Kanban.Repository
             var entity = await _dbSet.SingleOrDefaultAsync(func);
             return entity;
         }
-        //public async Task DeleteKanbanTask(T entity)
-        //{
-
-        //}
+        public async Task DeleteKanbanTask(T entity)
+        {
+            _dbSet.Remove(entity);
+            await _context.SaveChangesAsync();
+        }
+        public async Task PatchKanbanTask(T entity)
+        {
+            _dbSet.Update(entity);
+            await _context.SaveChangesAsync();
+        }
     }
 }

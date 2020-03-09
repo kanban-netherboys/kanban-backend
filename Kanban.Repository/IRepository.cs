@@ -13,6 +13,8 @@ namespace Kanban.Repository
         Task AddKanbanTask(T entity);
         Task<List<T>> GetAllKanbanTasks();
         Task<T> GetSingleKanbanTask(Expression<Func<T, bool>> Func);
-      //  Task DeleteKanbanTask(T entity);
+        Task DeleteKanbanTask(T entity);
+        Task PatchKanbanTask(T entity);
+
     }
 }

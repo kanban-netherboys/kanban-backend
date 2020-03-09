@@ -19,20 +19,20 @@ namespace Projekt_Kanban.Controllers
             _kanbanTaskService = kanbanTaskService;
         }
 
-        [HttpPost]
+        [HttpPost("{description},{status}")]
         public async Task<IActionResult> AddKanbanTask(string title, string description, string status)
         {
             await _kanbanTaskService.AddKanbanTask(title, description, status);
             return Ok("Task został dodany");
         }
-        [HttpGet]
+        [HttpGet ("AllTasks")]
         public async Task<IActionResult> GetAllKanbanTasks()
         {
             var kanbanTaskList = await _kanbanTaskService.GetAllKanbanTasks();
             return Ok(kanbanTaskList);
         }
 
-        [HttpGet ("BySingleEntity")]
+        [HttpGet ("BySingleTask")]
         public async Task<IActionResult> GetSingleKanbanTask(int kanbanTaskId)
         {
             var task = await _kanbanTaskService.GetSingleKanbanTask(kanbanTaskId);
@@ -42,11 +42,18 @@ namespace Projekt_Kanban.Controllers
             }
             return Ok(task);
         }
-        //[HttpDelete]
-        //public async Task<IActionResult> DeleteKanbanTask(int kanbanTaskId)
-        //{
-        //    await _kanbanTaskService.DeleteKanbanTask(kanbanTaskId);
-        //    return Ok("Usunięto Kanban Taska");
-        //}
+        [HttpDelete]
+        public async Task<IActionResult> DeleteKanbanTask(int kanbanTaskId)
+        {
+            await _kanbanTaskService.DeleteKanbanTask(kanbanTaskId);
+            return Ok("Usunięto Kanban Taska");
+        }
+
+        [HttpPatch ("{kanbanTaskId}")]
+        public async Task<IActionResult> PatchKanbanTask(int kanbanTaskId, string title, string description, string status)
+        {
+            var respond = await _kanbanTaskService.PatchKanbanTask(kanbanTaskId, title, description, status);
+            return Ok(respond);
+        }
     }
 }

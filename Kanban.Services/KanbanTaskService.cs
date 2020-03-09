@@ -28,9 +28,23 @@ namespace Kanban.Services
             var kanbanTask = await _repo.GetSingleKanbanTask(x => x.Id == kanbanTaskId);
             return kanbanTask;
         }
-        //public async Task DeleteKanbanTask(int kanbanTaskId)
-        //{
-        //    await _repo.DeleteKanbanTask();
-        //}
+        public async Task DeleteKanbanTask(int kanbanTaskId)
+        {
+            var kanbanTask = await _repo.GetSingleKanbanTask(x => x.Id == kanbanTaskId);
+            await _repo.DeleteKanbanTask(kanbanTask);
+        }
+        public async Task<string> PatchKanbanTask(int kanbanTaskId, string title, string description, string status)
+        {
+            var kanbanTask = await _repo.GetSingleKanbanTask(x => x.Id == kanbanTaskId);
+            if (kanbanTask == null)
+            {
+                return ("Brak takiego Taska");
+            }
+            kanbanTask.Title = title;
+            kanbanTask.Description = description;
+            kanbanTask.Status = status;
+            await _repo.PatchKanbanTask(kanbanTask);
+            return null;
+        }
     }
 }
