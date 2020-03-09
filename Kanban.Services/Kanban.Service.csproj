@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Kanban.Model\Kanban.Model.csproj" />
+    <ProjectReference Include="..\Kanban.Repository\Kanban.Repository.csproj" />
   </ItemGroup>
 
 </Project>

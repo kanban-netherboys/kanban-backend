@@ -10,6 +10,7 @@ namespace Kanban.Repository
 {
     public interface IRepository<T> where T : Entity
     {
-        Task Add(T entity);
+        Task AddKanbanTask(T entity);
+        Task<List<T>> GetAllKanbanTasks();
     }
 }
