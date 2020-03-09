@@ -4,6 +4,7 @@ using Kanban.Repository;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Kanban.Repository
@@ -28,5 +29,14 @@ namespace Kanban.Repository
             var list = await _dbSet.ToListAsync();
             return list;
         }
+        public async Task<T> GetSingleKanbanTask(Expression<Func<T, bool>> func)
+        {
+            var entity = await _dbSet.SingleOrDefaultAsync(func);
+            return entity;
+        }
+        //public async Task DeleteKanbanTask(T entity)
+        //{
+
+        //}
     }
 }

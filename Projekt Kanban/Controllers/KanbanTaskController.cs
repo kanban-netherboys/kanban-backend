@@ -23,7 +23,7 @@ namespace Projekt_Kanban.Controllers
         public async Task<IActionResult> AddKanbanTask(string title, string description, string status)
         {
             await _kanbanTaskService.AddKanbanTask(title, description, status);
-            return Ok();
+            return Ok("Task został dodany");
         }
         [HttpGet]
         public async Task<IActionResult> GetAllKanbanTasks()
@@ -31,5 +31,22 @@ namespace Projekt_Kanban.Controllers
             var kanbanTaskList = await _kanbanTaskService.GetAllKanbanTasks();
             return Ok(kanbanTaskList);
         }
+
+        [HttpGet ("BySingleEntity")]
+        public async Task<IActionResult> GetSingleKanbanTask(int kanbanTaskId)
+        {
+            var task = await _kanbanTaskService.GetSingleKanbanTask(kanbanTaskId);
+            if (task == null)
+            {
+                return BadRequest("Task not found");
+            }
+            return Ok(task);
+        }
+        //[HttpDelete]
+        //public async Task<IActionResult> DeleteKanbanTask(int kanbanTaskId)
+        //{
+        //    await _kanbanTaskService.DeleteKanbanTask(kanbanTaskId);
+        //    return Ok("Usunięto Kanban Taska");
+        //}
     }
 }
