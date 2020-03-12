@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Kanban.Model;
 using Kanban.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,8 +23,8 @@ namespace Projekt_Kanban.Controllers
         [HttpPost("{description},{status}")]
         public async Task<IActionResult> AddKanbanTask(string title, string description, string status)
         {
-            await _kanbanTaskService.AddKanbanTask(title, description, status);
-            return Ok("Task został dodany");
+            await _kanbanTaskService.AddKanbanTask(title,description,status);
+            return Ok("Task was added");
         }
         [HttpGet ("AllTasks")]
         public async Task<IActionResult> GetAllKanbanTasks()
@@ -46,13 +47,19 @@ namespace Projekt_Kanban.Controllers
         public async Task<IActionResult> DeleteKanbanTask(int kanbanTaskId)
         {
             await _kanbanTaskService.DeleteKanbanTask(kanbanTaskId);
-            return Ok("Usunięto Kanban Taska");
+            return Ok("Task was deleted");
         }
 
         [HttpPatch ("{kanbanTaskId}")]
         public async Task<IActionResult> PatchKanbanTask(int kanbanTaskId, string title, string description, string status)
         {
             var respond = await _kanbanTaskService.PatchKanbanTask(kanbanTaskId, title, description, status);
+            return Ok(respond);
+        }
+        [HttpPatch ("{kanbanTaskId},{status}")]
+        public async Task<IActionResult> PatchStatus(int kanbanTaskId, string status)
+        {
+            var respond = await _kanbanTaskService.PatchStatus(kanbanTaskId, status);
             return Ok(respond);
         }
     }

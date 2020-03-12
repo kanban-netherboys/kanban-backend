@@ -10,11 +10,11 @@ namespace Kanban.Repository
 {
     public interface IRepository<T> where T : Entity
     {
-        Task AddKanbanTask(T entity);
-        Task<List<T>> GetAllKanbanTasks();
-        Task<T> GetSingleKanbanTask(Expression<Func<T, bool>> Func);
-        Task DeleteKanbanTask(T entity);
-        Task PatchKanbanTask(T entity);
+        Task Add(T entity);
+        Task<List<T>> GetAll();
+        Task<T> GetSingleEntity(Expression<Func<T, bool>> Func);
+        Task Delete(T entity);
+        Task Patch(T entity);
 
     }
 }

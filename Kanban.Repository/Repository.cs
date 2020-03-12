@@ -19,27 +19,27 @@ namespace Kanban.Repository
             _dbSet = _context.Set<T>();
         }
 
-        public async Task AddKanbanTask(T entity)
+        public async Task Add(T entity)
         {
             _dbSet.Add(entity);
             await _context.SaveChangesAsync();
         }
-        public async Task<List<T>> GetAllKanbanTasks()
+        public async Task<List<T>> GetAll()
         {
             var list = await _dbSet.ToListAsync();
             return list;
         }
-        public async Task<T> GetSingleKanbanTask(Expression<Func<T, bool>> func)
+        public async Task<T> GetSingleEntity(Expression<Func<T, bool>> func)
         {
             var entity = await _dbSet.SingleOrDefaultAsync(func);
             return entity;
         }
-        public async Task DeleteKanbanTask(T entity)
+        public async Task Delete(T entity)
         {
             _dbSet.Remove(entity);
             await _context.SaveChangesAsync();
         }
-        public async Task PatchKanbanTask(T entity)
+        public async Task Patch(T entity)
         {
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
