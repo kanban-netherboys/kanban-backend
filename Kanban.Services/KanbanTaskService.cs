@@ -33,12 +33,14 @@ namespace Kanban.Services
             }
             return kanbanTask;
         }
-        public async Task DeleteKanbanTask(int kanbanTaskId)
+        public async Task<string> DeleteKanbanTask(int kanbanTaskId)
         {
             var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
-            if (kanbanTask !=null)
-                 await _repo.Delete(kanbanTask); 
-
+            if (kanbanTask == null)
+                 return ("Task not found");
+            await _repo.Delete(kanbanTask);
+            return null;
+        
         }
         public async Task<string> PatchKanbanTask(int kanbanTaskId, string title, string description, string status)
         {
@@ -52,7 +54,7 @@ namespace Kanban.Services
             if (description != null)
                 kanbanTask.Description = description;
             if (status !=null)
-            kanbanTask.Status = status;
+                kanbanTask.Status = status;
             await _repo.Patch(kanbanTask);
             return null;
         }

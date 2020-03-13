@@ -23,7 +23,7 @@ namespace Projekt_Kanban.Controllers
         [HttpPost("{description},{status}")]
         public async Task<IActionResult> AddKanbanTask(string title, string description, string status)
         {
-            await _kanbanTaskService.AddKanbanTask(title,description,status);
+            await _kanbanTaskService.AddKanbanTask(title, description, status);
             return Ok("Task was added");
         }
         [HttpGet ("AllTasks")]
@@ -46,8 +46,11 @@ namespace Projekt_Kanban.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteKanbanTask(int kanbanTaskId)
         {
-            await _kanbanTaskService.DeleteKanbanTask(kanbanTaskId);
-            return Ok("Task was deleted");
+           var respond =  await _kanbanTaskService.DeleteKanbanTask(kanbanTaskId);
+            if (respond == null)
+                return Ok("Task was deleted");
+            else
+            return Ok(respond);
         }
 
         [HttpPatch ("{kanbanTaskId}")]
