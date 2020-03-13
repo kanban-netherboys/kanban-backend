@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Kanban.Model
+namespace Kanban.Model.Models.Request
 {
-    public class KanbanTask : Entity
+    public class AddKanbanTaskVM
     {
         public string Title { get; set; }
         [Required]
         public string Description { get; set; }
-        [Required] 
+        [Required]
         public string Status { get; set; }
     }
 }
-//Seedowanie bazy danych, jaka relacja, entity framework how to set relations

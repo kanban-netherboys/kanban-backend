@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Kanban.Model;
+using Kanban.Model.Models.Request;
 using Kanban.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,10 +22,12 @@ namespace Projekt_Kanban.Controllers
             _kanbanTaskService = kanbanTaskService;
         }
 
-        [HttpPost("{description},{status}")]
-        public async Task<IActionResult> AddKanbanTask(string title, string description, string status)
+        [HttpPost]
+        public async Task<IActionResult> AddKanbanTask(AddKanbanTaskVM addKanbanTaskVM)
         {
-            await _kanbanTaskService.AddKanbanTask(title, description, status);
+            var result = await _kanbanTaskService.AddKanbanTask(addKanbanTaskVM);
+            if (result.Response != null)
+                return BadRequest(result);
             return Ok("Task was added");
         }
         [HttpGet ("AllTasks")]
@@ -46,11 +50,11 @@ namespace Projekt_Kanban.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteKanbanTask(int kanbanTaskId)
         {
-           var respond =  await _kanbanTaskService.DeleteKanbanTask(kanbanTaskId);
-            if (respond == null)
-                return Ok("Task was deleted");
-            else
-            return Ok(respond);
+           var isDeleted =  await _kanbanTaskService.DeleteKanbanTask(kanbanTaskId);
+            if (isDeleted == false)
+                return BadRequest("Task not found");
+
+            return Ok("Task was deleted");
         }
 
         [HttpPatch ("{kanbanTaskId}")]
@@ -59,7 +63,7 @@ namespace Projekt_Kanban.Controllers
             var respond = await _kanbanTaskService.PatchKanbanTask(kanbanTaskId, title, description, status);
             return Ok(respond);
         }
-        [HttpPatch ("{kanbanTaskId},{status}")]
+        [HttpPatch ("{kanbanTaskId}/{status}")]
         public async Task<IActionResult> PatchStatus(int kanbanTaskId, string status)
         {
             var respond = await _kanbanTaskService.PatchStatus(kanbanTaskId, status);
