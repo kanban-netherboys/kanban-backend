@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Kanban.Model.Models.Request
 {
-    public class AddKanbanTaskVM
+    public class KanbanTaskVM 
     {
         public string Title { get; set; }
         [Required]

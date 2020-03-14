@@ -17,10 +17,10 @@ namespace Kanban.Services
         {
             _repo = repo;
         }
-        public async Task<ResultDTO> AddKanbanTask(AddKanbanTaskVM addKanbanTaskVM)
+        public async Task<ResultDTO> AddKanbanTask(KanbanTaskVM addKanbanTaskVM)
         {
             // Tworzymy puste DTO, żeby zwrócić do kontrolera
-            var result = new ResultDTO()
+            var result = new ResultDTO() 
             {
                 Response = null
             };
@@ -53,50 +53,80 @@ namespace Kanban.Services
         {
             var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
             if (kanbanTask == null)
-            {
                 return null;
-            }
             return kanbanTask;
         }
-        public async Task<bool> DeleteKanbanTask(int kanbanTaskId)
+        public async Task<ResultDTO> DeleteKanbanTask(int kanbanTaskId)
         {
-            var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
-            if (kanbanTask == null)
-                 return false;
-            await _repo.Delete(kanbanTask);
-            return true;
-        
-        }
-        public async Task<string> PatchKanbanTask(int kanbanTaskId, string title, string description, string status)
-        {
-            var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
-            if (kanbanTask == null)
+            var result = new ResultDTO()
             {
-                return ("Brak takiego Taska");
-            }
-            if (title != null)
-                kanbanTask.Title = title;
-            if (description != null)
-                kanbanTask.Description = description;
-            if (status != null)
-                kanbanTask.Status = status;
-            await _repo.Patch(kanbanTask);
-            return null;
-        }
-        public async Task<string> PatchStatus(int kanbanTaskId, string status)
-        {
-            var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
-            if (kanbanTask == null)
+                Response = null
+            };
+            try
             {
-                return ("Brak takiego Taska");
+                var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
+                if (kanbanTask == null)
+                    result.Response = "Task not found";
+                await _repo.Delete(kanbanTask);
             }
-            if (status != null)
-                kanbanTask.Status = status;
-            await _repo.Patch(kanbanTask);
-            return null;
+            catch (Exception e)
+            {
+                result.Response = e.Message;
+                return result;
+            }
+            return result;   
+        }
+        public async Task<ResultDTO> PatchKanbanTask(int kanbanTaskId, KanbanTaskVM patchKanbanTaskVM)
+        {
+            var result = new ResultDTO()
+            {
+                Response = null
+            };
+            try
+            {
+                var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
+                if (kanbanTask == null)
+                    result.Response = "Task not found";
+                if (patchKanbanTaskVM.Title != null)
+                    kanbanTask.Title = patchKanbanTaskVM.Title;
+                if (patchKanbanTaskVM.Description != null)
+                    kanbanTask.Description = patchKanbanTaskVM.Description;
+                if (patchKanbanTaskVM.Status != null)
+                    kanbanTask.Status = patchKanbanTaskVM.Status;
+                await _repo.Patch(kanbanTask);
+            }
+            catch (Exception e)
+            {
+                result.Response = e.Message;
+                return result;
+            }
+            return result;
+        }
+        public async Task<ResultDTO> PatchStatus(int kanbanTaskId, KanbanTaskVM patchSingleKanbanTask)
+        {
+            var result = new ResultDTO()
+            {
+                Response = null
+            };
+            try
+            {
+                var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
+                if (kanbanTask == null)
+                    result.Response = "Task not found";
+                if (patchSingleKanbanTask.Status != null)
+                    kanbanTask.Status = patchSingleKanbanTask.Status;
+                await _repo.Patch(kanbanTask);
+            }
+            catch (Exception e)
+            {
+                result.Response = e.Message;
+                return result;
+            }
+            return result;
         }
     }
 }
 
 // Database add-migration(tylko ja), update-database, drop-database 
 // Dla patcha tak jak w add, delete żeby zwracał resultDTO, Gety zrobić KanbanTaskDTO, który zwraca listę, albo element
+// Testy jednostkowe (Unit tests) - na przyszłość

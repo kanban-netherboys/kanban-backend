@@ -23,7 +23,7 @@ namespace Projekt_Kanban.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddKanbanTask(AddKanbanTaskVM addKanbanTaskVM)
+        public async Task<IActionResult> AddKanbanTask(KanbanTaskVM addKanbanTaskVM)
         {
             var result = await _kanbanTaskService.AddKanbanTask(addKanbanTaskVM);
             if (result.Response != null)
@@ -42,32 +42,34 @@ namespace Projekt_Kanban.Controllers
         {
             var task = await _kanbanTaskService.GetSingleKanbanTask(kanbanTaskId);
             if (task == null)
-            {
                 return BadRequest("Task not found");
-            }
             return Ok(task);
         }
         [HttpDelete]
         public async Task<IActionResult> DeleteKanbanTask(int kanbanTaskId)
         {
-           var isDeleted =  await _kanbanTaskService.DeleteKanbanTask(kanbanTaskId);
-            if (isDeleted == false)
+           var result =  await _kanbanTaskService.DeleteKanbanTask(kanbanTaskId);
+            if (result.Response != null)
                 return BadRequest("Task not found");
-
             return Ok("Task was deleted");
         }
 
         [HttpPatch ("{kanbanTaskId}")]
-        public async Task<IActionResult> PatchKanbanTask(int kanbanTaskId, string title, string description, string status)
+        public async Task<IActionResult> PatchKanbanTask(int kanbanTaskId, KanbanTaskVM patchKanbanTaskVM)
         {
-            var respond = await _kanbanTaskService.PatchKanbanTask(kanbanTaskId, title, description, status);
-            return Ok(respond);
+            var result = await _kanbanTaskService.PatchKanbanTask(kanbanTaskId, patchKanbanTaskVM);
+            if (result.Response != null)
+                return BadRequest(result);
+            return Ok("Task was patched");
         }
-        [HttpPatch ("{kanbanTaskId}/{status}")]
-        public async Task<IActionResult> PatchStatus(int kanbanTaskId, string status)
+
+        [HttpPatch ("PatchStatus")]
+        public async Task<IActionResult> PatchStatus(int kanbanTaskId, KanbanTaskVM patchSingleKanbanTaskVM)
         {
-            var respond = await _kanbanTaskService.PatchStatus(kanbanTaskId, status);
-            return Ok(respond);
+            var result = await _kanbanTaskService.PatchStatus(kanbanTaskId, patchSingleKanbanTaskVM);
+            if (result.Response != null)
+                return BadRequest(result);
+            return Ok("Task status was patched");
         }
     }
 }

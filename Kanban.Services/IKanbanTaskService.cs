@@ -10,11 +10,11 @@ namespace Kanban.Services
 {
     public interface IKanbanTaskService
     {
-        Task<ResultDTO> AddKanbanTask(AddKanbanTaskVM addKanbanTaskVM);
+        Task<ResultDTO> AddKanbanTask(KanbanTaskVM addKanbanTaskVM);
         Task<List<KanbanTask>> GetAllKanbanTasks();
         Task<KanbanTask> GetSingleKanbanTask(int kanbanTaskId);
-        Task<bool> DeleteKanbanTask(int kanbanTaskId);
-        Task<string> PatchKanbanTask(int kanbanTaskId, string title, string description, string status);
-        Task<string> PatchStatus(int kanbanTaskId, string status);
+        Task<ResultDTO> DeleteKanbanTask(int kanbanTaskId);
+        Task<ResultDTO> PatchKanbanTask(int kanbanTaskId, KanbanTaskVM patchKanbanTaskVM);
+        Task<ResultDTO> PatchStatus(int kanbanTaskId, KanbanTaskVM patchSingleKanbanTaskVM);
     }
 }
