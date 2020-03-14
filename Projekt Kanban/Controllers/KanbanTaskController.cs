@@ -34,16 +34,18 @@ namespace Projekt_Kanban.Controllers
         public async Task<IActionResult> GetAllKanbanTasks()
         {
             var kanbanTaskList = await _kanbanTaskService.GetAllKanbanTasks();
+            if (kanbanTaskList == null)
+                return BadRequest("No tasks to show");
             return Ok(kanbanTaskList);
         }
 
         [HttpGet ("BySingleTask")]
         public async Task<IActionResult> GetSingleKanbanTask(int kanbanTaskId)
         {
-            var task = await _kanbanTaskService.GetSingleKanbanTask(kanbanTaskId);
-            if (task == null)
+            var kanbanTask = await _kanbanTaskService.GetSingleKanbanTask(kanbanTaskId);
+            if (kanbanTask.SingleTask == null)
                 return BadRequest("Task not found");
-            return Ok(task);
+            return Ok(kanbanTask);
         }
         [HttpDelete]
         public async Task<IActionResult> DeleteKanbanTask(int kanbanTaskId)

@@ -14,4 +14,4 @@ namespace Kanban.Model
         public string Status { get; set; }
     }
 }
-//Seedowanie bazy danych, jaka relacja, entity framework how to set relations
+

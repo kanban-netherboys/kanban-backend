@@ -4,8 +4,9 @@ using System.Text;
 
 namespace Kanban.Model.Models.Response
 {
-    class KanbanTaskDTO
+    public class KanbanTaskDTO
     {
         public List<KanbanTask> KanbanList { get; set; }
+        public KanbanTask SingleTask { get; set; }
     }
 }

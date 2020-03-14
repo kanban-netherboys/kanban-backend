@@ -19,7 +19,7 @@ namespace Kanban.Services
         }
         public async Task<ResultDTO> AddKanbanTask(KanbanTaskVM addKanbanTaskVM)
         {
-            // Tworzymy puste DTO, żeby zwrócić do kontrolera
+            // Tworzymy puste DTO (data transfer object), żeby zwrócić do kontrolera
             var result = new ResultDTO() 
             {
                 Response = null
@@ -44,14 +44,20 @@ namespace Kanban.Services
            // Jak sie dodało, to returnujemy nic
             return result;
         }
-        public async Task<List<KanbanTask>> GetAllKanbanTasks()
+        public async Task<KanbanTaskDTO> GetAllKanbanTasks()
         {
-            var KanbanTaskList = await _repo.GetAll();
-            return KanbanTaskList;
+            var kanbanTaskList = new KanbanTaskDTO()
+            {
+                KanbanList = await _repo.GetAll()
+            };
+            return kanbanTaskList;
         }
-        public async Task<KanbanTask> GetSingleKanbanTask(int kanbanTaskId)
+        public async Task<KanbanTaskDTO> GetSingleKanbanTask(int kanbanTaskId)
         {
-            var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
+            var kanbanTask = new KanbanTaskDTO()
+            {
+                SingleTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId)
+            };
             if (kanbanTask == null)
                 return null;
             return kanbanTask;
@@ -130,3 +136,4 @@ namespace Kanban.Services
 // Database add-migration(tylko ja), update-database, drop-database 
 // Dla patcha tak jak w add, delete żeby zwracał resultDTO, Gety zrobić KanbanTaskDTO, który zwraca listę, albo element
 // Testy jednostkowe (Unit tests) - na przyszłość
+//Seedowanie bazy danych, jaka relacja, entity framework how to set relations
