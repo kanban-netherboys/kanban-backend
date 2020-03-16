@@ -19,14 +19,12 @@ namespace Kanban.Services
         }
         public async Task<ResultDTO> AddKanbanTask(KanbanTaskVM addKanbanTaskVM)
         {
-            // Tworzymy puste DTO (data transfer object), żeby zwrócić do kontrolera
             var result = new ResultDTO() 
             {
                 Response = null
             };
             try
             {
-                // Próbuję dodać, na podstawie modelu z VM
                 await _repo.Add(new KanbanTask
                 {
                     Title = addKanbanTaskVM.Title,
@@ -34,14 +32,11 @@ namespace Kanban.Services
                     Status = addKanbanTaskVM.Status
                 });
             }
-            // Jeżeli nie wyjdzie, to wyłapujemy wyjątek e
             catch (Exception e)
             {
-                // I zapisujemy message tego błędu do response i to returnujemy
                 result.Response = e.Message;
                 return result;
             }
-           // Jak sie dodało, to returnujemy nic
             return result;
         }
         public async Task<KanbanTaskDTO> GetAllKanbanTasks()
@@ -132,8 +127,3 @@ namespace Kanban.Services
         }
     }
 }
-
-// Database add-migration(tylko ja), update-database, drop-database 
-// Dla patcha tak jak w add, delete żeby zwracał resultDTO, Gety zrobić KanbanTaskDTO, który zwraca listę, albo element
-// Testy jednostkowe (Unit tests) - na przyszłość
-//Seedowanie bazy danych, jaka relacja, entity framework how to set relations
