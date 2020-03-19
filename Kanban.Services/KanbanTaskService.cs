@@ -103,7 +103,7 @@ namespace Kanban.Services
             }
             return result;
         }
-        public async Task<ResultDTO> PatchStatus(int kanbanTaskId, KanbanTaskVM patchSingleKanbanTask)
+        public async Task<ResultDTO> PatchStatus(int kanbanTaskId, PatchKanbanTaskVM patchSingleKanbanTask)
         {
             var result = new ResultDTO()
             {

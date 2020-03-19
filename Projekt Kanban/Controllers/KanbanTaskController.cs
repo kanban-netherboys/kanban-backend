@@ -56,7 +56,7 @@ namespace Projekt_Kanban.Controllers
             return Ok("Task was deleted");
         }
 
-        [HttpPatch ("{kanbanTaskId}")]
+        [HttpPatch ("PatchTask")]
         public async Task<IActionResult> PatchKanbanTask(int kanbanTaskId, KanbanTaskVM patchKanbanTaskVM)
         {
             var result = await _kanbanTaskService.PatchKanbanTask(kanbanTaskId, patchKanbanTaskVM);
@@ -66,7 +66,7 @@ namespace Projekt_Kanban.Controllers
         }
 
         [HttpPatch ("PatchStatus")]
-        public async Task<IActionResult> PatchStatus(int kanbanTaskId, KanbanTaskVM patchSingleKanbanTaskVM)
+        public async Task<IActionResult> PatchStatus(int kanbanTaskId, PatchKanbanTaskVM patchSingleKanbanTaskVM)
         {
             var result = await _kanbanTaskService.PatchStatus(kanbanTaskId, patchSingleKanbanTaskVM);
             if (result.Response != null)
