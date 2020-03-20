@@ -24,8 +24,15 @@ namespace Projekt_Kanban.Controllers
             var result = await _userService.AddUser(userVM);
             if (result.Response != null)
                 return BadRequest(result);
-            return Ok("User was added");
-            
+            return Ok("User was added");      
+        }
+        [HttpGet ("GetAll")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var userList = await _userService.GetAllUsers();
+            if (userList == null)
+                return BadRequest("No users to show");
+            return Ok(userList);
         }
     }
 }

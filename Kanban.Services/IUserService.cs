@@ -10,5 +10,6 @@ namespace Kanban.Service
     public interface IUserService
     {
         Task<ResultDTO> AddUser(UserVM userVM);
+        Task<UserDTO> GetAllUsers();
     }
 }

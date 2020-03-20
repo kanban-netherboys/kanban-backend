@@ -40,5 +40,13 @@ namespace Kanban.Service
             }
             return result;
         }
+        public async Task<UserDTO> GetAllUsers()
+        {
+            var userList = new UserDTO()
+            {
+                UserList = await _repo.GetAll()
+            };
+            return userList;
+        }
     }
 }

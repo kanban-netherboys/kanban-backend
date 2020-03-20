@@ -16,5 +16,6 @@ namespace Kanban.Services
         Task<ResultDTO> DeleteKanbanTask(int kanbanTaskId);
         Task<ResultDTO> PatchKanbanTask(int kanbanTaskId, KanbanTaskVM patchKanbanTaskVM);
         Task<ResultDTO> PatchStatus(int kanbanTaskId, PatchKanbanTaskVM patchSingleKanbanTaskVM);
+        Task<ResultDTO> PatchProgressStatus(int kanbanTaskId, int progressStatus);
     }
 }

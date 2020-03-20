@@ -73,5 +73,13 @@ namespace Projekt_Kanban.Controllers
                 return BadRequest(result);
             return Ok("Task status was patched");
         }
+        [HttpPatch ("PatchProgressStatus")]
+        public async Task<IActionResult> PatchProgressStatus(int kanbanTaskId, int progressStatus)
+        {
+            var result = await _kanbanTaskService.PatchProgressStatus(kanbanTaskId, progressStatus);
+            if (result.Response != null)
+                return BadRequest(result);
+            return Ok("Progress status was patched");
+        }
     }
 }
