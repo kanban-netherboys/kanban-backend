@@ -34,5 +34,29 @@ namespace Projekt_Kanban.Controllers
                 return BadRequest("No users to show");
             return Ok(userList);
         }
+        [HttpGet ("GetSingleUser")]
+        public async Task<IActionResult> GetSingleUser(int userId)
+        {
+            var singleUser = await _userService.GetSingleUser(userId);
+            if (singleUser.SingleUser == null)
+                return BadRequest("User not found");
+            return Ok(singleUser);
+        }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteUser(int userId)
+        {
+            var result = await _userService.DeleteUser(userId);
+            if (result.Response != null)
+                return BadRequest(result);
+            return Ok("User was deleted");
+        }
+        [HttpPatch]
+        public async Task<IActionResult> PatchUser(int userId, UserVM userVM)
+        {
+            var result = await _userService.PatchUser(userId, userVM);
+            if (result.Response != null)
+                return BadRequest(result);
+            return Ok("User was patched");
+        }
     }
 }

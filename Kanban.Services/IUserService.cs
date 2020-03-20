@@ -11,5 +11,8 @@ namespace Kanban.Service
     {
         Task<ResultDTO> AddUser(UserVM userVM);
         Task<UserDTO> GetAllUsers();
+        Task<UserDTO> GetSingleUser(int userId);
+        Task<ResultDTO> DeleteUser(int userId);
+        Task<ResultDTO> PatchUser(int userId, UserVM userVM);
     }
 }
