@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Demcio.Repository;
 using Kanban.Repository;
+using Kanban.Service;
 using Kanban.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,7 +32,8 @@ namespace Projekt_Kanban
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IKanbanTaskService, KanbanTaskService>();
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));        
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
             services.AddSwaggerGen(c =>

@@ -3,14 +3,16 @@ using Demcio.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Kanban.Repository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200320164544_Users2")]
+    partial class Users2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,21 +40,6 @@ namespace Kanban.Repository.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Kanban.Model.DbModels.UserTask", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("KanbanTaskId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "KanbanTaskId");
-
-                    b.HasIndex("KanbanTaskId");
-
-                    b.ToTable("UserTask");
-                });
-
             modelBuilder.Entity("Kanban.Model.KanbanTask", b =>
                 {
                     b.Property<int>("Id")
@@ -77,21 +64,6 @@ namespace Kanban.Repository.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("KanbanTasks");
-                });
-
-            modelBuilder.Entity("Kanban.Model.DbModels.UserTask", b =>
-                {
-                    b.HasOne("Kanban.Model.KanbanTask", "KanbanTask")
-                        .WithMany("UserTask")
-                        .HasForeignKey("KanbanTaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Kanban.Model.DbModels.User", "User")
-                        .WithMany("UserTask")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
