@@ -12,9 +12,5 @@ namespace Kanban.Model.DbModels
         [Required]
         public string Surname { get; set; }
 
-        //public List<UserTask> UserTask { get; set; }
-     //   public UserTask UserTask { get; set; }
-      //  public int UserTaskId { get; set; }
-
     }
 }

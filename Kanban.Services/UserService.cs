@@ -119,14 +119,10 @@ namespace Kanban.Service
                 {
                     var usertask = new UserTask()
                     {
-                       // UserId = userId,
-                        //KanbanTaskId = taskId
                         User = user,
                         KanbanTask = kanbanTask
                     };
                     await _usertaskrepo.Add(usertask);
-                   // db.UserTasks.Add(usertask);
-                   // db.SaveChanges();
                 }
                 else
                     result.Response = "Task or user not found";

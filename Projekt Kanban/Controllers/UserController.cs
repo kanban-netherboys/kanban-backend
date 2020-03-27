@@ -65,6 +65,7 @@ namespace Projekt_Kanban.Controllers
             if (result.Response != null)
                 return BadRequest(result);
             return Ok("Task was assigned to user");
+
         }
     }
 }

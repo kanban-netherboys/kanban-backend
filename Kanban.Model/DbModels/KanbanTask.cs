@@ -14,9 +14,7 @@ namespace Kanban.Model
         [Required] 
         public string Status { get; set; }
         public int ProgressStatus { get; set; }
-       // public List<UserTask> UserTask { get; set; }
-      //  public UserTask UserTask { get; set; }
-     //   public int UserTaskId { get; set; }
+
     }
 }
 
