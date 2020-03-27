@@ -16,6 +16,5 @@ namespace Kanban.Repository
         Task Delete(T entity);
         Task Patch(T entity);
         Task<List<T>> GetAll(params Expression<Func<T, object>>[] includes);
-        // Task<T> GetSingleEntityTwo(Expression<Func<T,T, bool>> Func);
     }
 }

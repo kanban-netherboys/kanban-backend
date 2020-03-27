@@ -78,7 +78,7 @@ namespace Projekt_Kanban.Controllers
         [HttpDelete("DeleteTaskFromUser")]
         public async Task<IActionResult> DeleteTaskFromUser(int userId, int taskId)
         {
-            var result = await _userService.DeleteTaskFromUSer(userId, taskId);
+            var result = await _userService.DeleteTaskFromUser(userId, taskId);
             if (result.Response != null)
                 return BadRequest(result);
             return Ok("Task was deleted from user");
