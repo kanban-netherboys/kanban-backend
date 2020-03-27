@@ -14,5 +14,6 @@ namespace Kanban.Service
         Task<UserDTO> GetSingleUser(int userId);
         Task<ResultDTO> DeleteUser(int userId);
         Task<ResultDTO> PatchUser(int userId, UserVM userVM);
+        Task<ResultDTO> AssignTaskToUser(int taskId, int userId);
     }
 }

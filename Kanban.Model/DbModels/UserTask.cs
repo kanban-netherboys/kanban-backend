@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Kanban.Model.DbModels
 {
-    public class UserTask
+    public class UserTask : Entity
     {
         public int UserId { get; set; }
         public User User { get; set; }

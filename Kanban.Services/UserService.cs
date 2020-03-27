@@ -13,10 +13,13 @@ namespace Kanban.Service
     public class UserService : IUserService
     {
         private readonly IRepository<User> _repo;
-
-        public UserService(IRepository<User> repo)
+        private readonly IRepository<KanbanTask> _taskrepo;
+        private readonly IRepository<UserTask> _usertaskrepo;
+        public UserService(IRepository<User> repo, IRepository<KanbanTask> taskrepo, IRepository<UserTask> usertaskrepo)
         {
             _repo = repo;
+            _taskrepo = taskrepo;
+            _usertaskrepo = usertaskrepo;
         }
 
         public async Task<ResultDTO> AddUser(UserVM userVM)
@@ -94,6 +97,39 @@ namespace Kanban.Service
                 if (userVM.Surname != null)
                     user.Surname = userVM.Surname;
                 await _repo.Patch(user);
+            }
+            catch (Exception e)
+            {
+                result.Response = e.Message;
+                return result;
+            }
+            return result;
+        }
+        public async Task<ResultDTO> AssignTaskToUser(int taskId, int userId)
+        {
+            var result = new ResultDTO()
+            {
+                Response = null
+            };
+            try
+            {
+                var user = await _repo.GetSingleEntity(x => x.Id == userId);
+                var kanbanTask = await _taskrepo.GetSingleEntity(y => y.Id == taskId);
+                if (user != null && kanbanTask != null)
+                {
+                    var usertask = new UserTask()
+                    {
+                       // UserId = userId,
+                        //KanbanTaskId = taskId
+                        User = user,
+                        KanbanTask = kanbanTask
+                    };
+                    await _usertaskrepo.Add(usertask);
+                   // db.UserTasks.Add(usertask);
+                   // db.SaveChanges();
+                }
+                else
+                    result.Response = "Task or user not found";
             }
             catch (Exception e)
             {

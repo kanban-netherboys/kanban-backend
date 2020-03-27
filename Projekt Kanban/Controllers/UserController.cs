@@ -58,5 +58,13 @@ namespace Projekt_Kanban.Controllers
                 return BadRequest(result);
             return Ok("User was patched");
         }
+        [HttpPost ("AddTaskToUser")]
+        public async Task<IActionResult> AssignTaskToUser(int taskId, int userId)
+        {
+            var result = await _userService.AssignTaskToUser(taskId, userId);
+            if (result.Response != null)
+                return BadRequest(result);
+            return Ok("Task was assigned to user");
+        }
     }
 }
