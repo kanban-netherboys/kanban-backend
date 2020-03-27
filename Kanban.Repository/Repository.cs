@@ -4,6 +4,7 @@ using Kanban.Repository;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -29,6 +30,7 @@ namespace Kanban.Repository
             var list = await _dbSet.ToListAsync();
             return list;
         }
+
         public async Task<T> GetSingleEntity(Expression<Func<T, bool>> func)
         {
             var entity = await _dbSet.SingleOrDefaultAsync(func);
@@ -44,5 +46,24 @@ namespace Kanban.Repository
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<T>> GetAll(params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = _dbSet;
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            var list = await query.ToListAsync();
+
+            return list;
+        }
+        // public async Task<T> GetSingleEntityTwo(Expression<Func<T, T, bool>> func)
+        // {
+        //      var entity = await _dbSet.SingleOrDefaultAsync(func);
+        //      return entity;
+        //  }
     }
 }

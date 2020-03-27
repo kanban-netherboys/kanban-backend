@@ -5,6 +5,7 @@ using Kanban.Model.Models.Response;
 using Kanban.Repository;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -55,7 +56,7 @@ namespace Kanban.Service
         {
             var user = new UserDTO()
             {
-               SingleUser = await _repo.GetSingleEntity(x => x.Id == userId)
+                SingleUser = await _repo.GetSingleEntity(x => x.Id == userId)
             };
             if (user == null)
                 return null;
@@ -117,15 +118,60 @@ namespace Kanban.Service
                 var kanbanTask = await _taskrepo.GetSingleEntity(y => y.Id == taskId);
                 if (user != null && kanbanTask != null)
                 {
-                    var usertask = new UserTask()
+                    var task = await _usertaskrepo.GetSingleEntity(x => x.UserId == userId && x.KanbanTaskId == taskId);
+                    if (task == null)
                     {
-                        User = user,
-                        KanbanTask = kanbanTask
-                    };
-                    await _usertaskrepo.Add(usertask);
+                        var usertask = new UserTask()
+                        {
+                            User = user,
+                            KanbanTask = kanbanTask
+                        };
+                        await _usertaskrepo.Add(usertask);
+                    }
+                    else
+                        result.Response = "Task already assigned to user";
                 }
                 else
                     result.Response = "Task or user not found";
+            }
+            catch (Exception e)
+            {
+                result.Response = e.Message;
+                return result;
+            }
+            return result;
+        }
+
+        public async Task<UsersTasksListDTO> GetAllTasksPerUser()
+        {
+            var list = await _usertaskrepo.GetAll( x => x.User, y => y.KanbanTask);
+
+            var newlist = list.GroupBy(x => x.UserId)
+                .Select(y => new UserTasksDTO
+                {
+                    User = y.Select(z => z.User).FirstOrDefault(x => x.Id == y.Key),
+                    KanbanTaskList = y.Select(z => z.KanbanTask).OrderBy( x => x.Id).ToList()
+                }).OrderBy(x => x.User.Id).ToList(); 
+
+            var userList = new UsersTasksListDTO()
+            {
+                UsersTasksList = newlist
+            };
+            return userList;
+        }
+
+        public async Task<ResultDTO> DeleteTaskFromUser(int userId, int taskId)
+        {
+            var result = new ResultDTO()
+            {
+                Response = null
+            };
+            try
+            {
+                var task = await _usertaskrepo.GetSingleEntity(x => x.UserId == userId && x.KanbanTaskId == taskId);
+                if (task == null)
+                    result.Response = "Task is not assigned to this user";
+                await _usertaskrepo.Delete(task);
             }
             catch (Exception e)
             {

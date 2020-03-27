@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Kanban.Model.Models.Request;
+using Kanban.Model.Models.Response;
 using Kanban.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -65,7 +66,22 @@ namespace Projekt_Kanban.Controllers
             if (result.Response != null)
                 return BadRequest(result);
             return Ok("Task was assigned to user");
-
+        }
+        [HttpGet("AllTasksPerUser")]
+        public async Task<IActionResult> GetAllTasksPerUser()
+        {
+            var userTaskList = await _userService.GetAllTasksPerUser();
+            if (userTaskList == null)
+                return BadRequest("No users to show");
+            return Ok(userTaskList);
+        }
+        [HttpDelete("DeleteTaskFromUser")]
+        public async Task<IActionResult> DeleteTaskFromUser(int userId, int taskId)
+        {
+            var result = await _userService.DeleteTaskFromUSer(userId, taskId);
+            if (result.Response != null)
+                return BadRequest(result);
+            return Ok("Task was deleted from user");
         }
     }
 }

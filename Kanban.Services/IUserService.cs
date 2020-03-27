@@ -1,4 +1,5 @@
-﻿using Kanban.Model.Models.Request;
+﻿using Kanban.Model.DbModels;
+using Kanban.Model.Models.Request;
 using Kanban.Model.Models.Response;
 using System;
 using System.Collections.Generic;
@@ -15,5 +16,7 @@ namespace Kanban.Service
         Task<ResultDTO> DeleteUser(int userId);
         Task<ResultDTO> PatchUser(int userId, UserVM userVM);
         Task<ResultDTO> AssignTaskToUser(int taskId, int userId);
+        Task<UsersTasksListDTO> GetAllTasksPerUser();
+        Task<ResultDTO> DeleteTaskFromUser(int userId, int taskId);
     }
 }
