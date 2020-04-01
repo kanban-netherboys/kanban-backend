@@ -20,14 +20,14 @@ namespace Projekt_Kanban.Controllers
             _userService = userService;
         }
         [HttpPost]
-        public async Task<IActionResult> AddUser (UserVM userVM)
+        public async Task<IActionResult> AddUser(UserVM userVM)
         {
             var result = await _userService.AddUser(userVM);
             if (result.Response != null)
                 return BadRequest(result);
-            return Ok("User was added");      
+            return Ok("User was added");
         }
-        [HttpGet ("GetAll")]
+        [HttpGet("GetAll")]
         public async Task<IActionResult> GetAllUsers()
         {
             var userList = await _userService.GetAllUsers();
@@ -35,7 +35,7 @@ namespace Projekt_Kanban.Controllers
                 return BadRequest("No users to show");
             return Ok(userList);
         }
-        [HttpGet ("GetSingleUser")]
+        [HttpGet("GetSingleUser")]
         public async Task<IActionResult> GetSingleUser(int userId)
         {
             var singleUser = await _userService.GetSingleUser(userId);
@@ -59,7 +59,7 @@ namespace Projekt_Kanban.Controllers
                 return BadRequest(result);
             return Ok("User was patched");
         }
-        [HttpPost ("AddTaskToUser")]
+        [HttpPost("AssignTaskToUser")]
         public async Task<IActionResult> AssignTaskToUser(int taskId, int userId)
         {
             var result = await _userService.AssignTaskToUser(taskId, userId);
@@ -82,6 +82,14 @@ namespace Projekt_Kanban.Controllers
             if (result.Response != null)
                 return BadRequest(result);
             return Ok("Task was deleted from user");
+        }
+        [HttpPost("AddTaskToUser")]
+        public async Task<IActionResult> AddTaskToUser(TaskToUserVM taskToUser)
+        {
+            var result = await _userService.AddTaskToUser(taskToUser);
+            if (result.Response != null)
+                return BadRequest(result);
+            return Ok("Task was added to user");
         }
     }
 }

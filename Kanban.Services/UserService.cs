@@ -180,5 +180,35 @@ namespace Kanban.Service
             }
             return result;
         }
+        public async Task<ResultDTO> AddTaskToUser(TaskToUserVM taskToUser)
+        {
+            var result = new ResultDTO()
+            {
+                Response = null
+            };
+            try
+            {
+                var task = (new KanbanTask
+                {
+                    Title = taskToUser.Title,
+                    Description = taskToUser.Description,
+                    Status = taskToUser.Status
+                });
+                await _taskrepo.Add(task);
+                var findUser = await _repo.GetSingleEntity(x => x.Name == taskToUser.Name && x.Surname == taskToUser.Surname);
+                var usertask = new UserTask()
+                {
+                    User = findUser,
+                    KanbanTask = task
+                };
+                await _usertaskrepo.Add(usertask);
+            }
+            catch (Exception e)
+            {
+                result.Response = e.Message;
+                return result;
+            }
+            return result;
+        }
     }
 }
