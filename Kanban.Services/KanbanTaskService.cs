@@ -126,7 +126,7 @@ namespace Kanban.Services
             return result;
         }
 
-        public async Task<ResultDTO> PatchProgressStatus(int kanbanTaskId, int progressStatus)
+        public async Task<ResultDTO> PatchProgressStatus(int kanbanTaskId, PatchProgressStatusVM progressStatusVM)
         {
             var result = new ResultDTO()
             {
@@ -137,10 +137,10 @@ namespace Kanban.Services
                 var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
                 if (kanbanTask == null)
                     result.Response = "Task not found";
-                if (progressStatus < 6)
-                    kanbanTask.ProgressStatus = progressStatus;
+                if (progressStatusVM.ProgressStatus < 6)
+                    kanbanTask.ProgressStatus = progressStatusVM.ProgressStatus;
                 else
-                    result.Response = "Status not found";
+                    result.Response = "Progress Status not found";
                 await _repo.Patch(kanbanTask);
             }
             catch (Exception e)
