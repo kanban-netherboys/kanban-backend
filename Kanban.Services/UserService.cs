@@ -210,5 +210,23 @@ namespace Kanban.Service
             }
             return result;
         }
+
+        public async Task<TaskToUserListDTO> GetAllUsersPerTask()
+        {
+            var list = await _usertaskrepo.GetAll(x => x.User, y => y.KanbanTask);
+
+            var newlist = list.GroupBy(y => y.KanbanTaskId)
+                .Select(x => new TaskToUserDTO
+                {
+                    KanbanTask = x.Select(z => z.KanbanTask).FirstOrDefault(y => y.Id == x.Key),
+                    UserList = x.Select(z => z.User).OrderBy(y => y.Id).ToList()
+                }).OrderBy(x => x.KanbanTask.Id).ToList();
+
+            var userList = new TaskToUserListDTO()
+            {
+                TaskToUserList = newlist
+            };
+            return userList;
+        }
     }
 }

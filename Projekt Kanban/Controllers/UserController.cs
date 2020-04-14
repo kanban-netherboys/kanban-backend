@@ -91,5 +91,13 @@ namespace Projekt_Kanban.Controllers
                 return BadRequest(result);
             return Ok("Task was added to user");
         }
+        [HttpGet("AllUsersPerTask")]
+        public async Task<IActionResult> GetAllUsersPerTask()
+        {
+            var userTaskList = await _userService.GetAllUsersPerTask();
+            if (userTaskList == null)
+                return BadRequest("No tasks to show");
+            return Ok(userTaskList);
+        }
     }
 }
