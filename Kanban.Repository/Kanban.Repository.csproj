@@ -17,6 +17,12 @@
     <Compile Remove="Migrations\20200327000723_User9.Designer.cs" />
     <Compile Remove="Migrations\20200327001541_Users10.cs" />
     <Compile Remove="Migrations\20200327001541_Users10.Designer.cs" />
+    <Compile Remove="Migrations\20200414215814_TaskUpdate.cs" />
+    <Compile Remove="Migrations\20200414215814_TaskUpdate.Designer.cs" />
+    <Compile Remove="Migrations\20200414223502_TaskUpdate2.cs" />
+    <Compile Remove="Migrations\20200414223502_TaskUpdate2.Designer.cs" />
+    <Compile Remove="Migrations\20200414223619_TaskUpdate2.cs" />
+    <Compile Remove="Migrations\20200414223619_TaskUpdate2.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Kanban.Model.Models.Response
 {
-    public class TaskToUserListDTO
+    public class TaskWithUserListDTO
     {
-        public List<TaskToUserDTO> TaskToUserList { get; set; }
+        public List<TaskWithUserDTO> TaskWithUserList { get; set; }
     }
 }

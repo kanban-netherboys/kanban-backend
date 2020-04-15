@@ -14,7 +14,6 @@ namespace Kanban.Model
         [Required] 
         public string Status { get; set; }
         public int ProgressStatus { get; set; }
-
     }
 }
 

@@ -211,20 +211,48 @@ namespace Kanban.Service
             return result;
         }
 
-        public async Task<TaskToUserListDTO> GetAllUsersPerTask()
+        public async Task<TaskWithUserListDTO> GetAllUsersPerTask()
         {
-            var list = await _usertaskrepo.GetAll(x => x.User, y => y.KanbanTask);
-
-            var newlist = list.GroupBy(y => y.KanbanTaskId)
-                .Select(x => new TaskToUserDTO
-                {
-                    KanbanTask = x.Select(z => z.KanbanTask).FirstOrDefault(y => y.Id == x.Key),
-                    UserList = x.Select(z => z.User).OrderBy(y => y.Id).ToList()
-                }).OrderBy(x => x.KanbanTask.Id).ToList();
-
-            var userList = new TaskToUserListDTO()
+            var list = await _taskrepo.GetAll();
+            var userTaskList = await _usertaskrepo.GetAll();
+            List<TaskWithUserDTO> newList = new List<TaskWithUserDTO>();
+            foreach (KanbanTask task in list)
             {
-                TaskToUserList = newlist
+                var ifHasUser = await _usertaskrepo.GetSingleEntity(x => x.KanbanTaskId == task.Id);
+                if (ifHasUser == null)
+                {
+                    newList.Add(new TaskWithUserDTO
+                    {
+                        KanbanTask = task,
+                        UserList = new List<UserWithoutIdDTO>()
+                    });
+                }
+                else
+                {
+                    List<UserWithoutIdDTO> finalList = new List<UserWithoutIdDTO>();
+                    foreach (UserTask userTask in userTaskList)
+                    {
+                        if (userTask.KanbanTaskId == task.Id)
+                        {
+                            var user = await _repo.GetSingleEntity(x => x.Id == userTask.UserId);
+                            var newUser = new UserWithoutIdDTO
+                            {
+                                Name = user.Name,
+                                Surname = user.Surname
+                            };
+                            finalList.Add(newUser);
+                        }
+                    }
+                    newList.Add(new TaskWithUserDTO
+                    {
+                        KanbanTask = task,
+                        UserList = finalList
+                    });
+                }
+            }
+            var userList = new TaskWithUserListDTO()
+            {
+                TaskWithUserList = newList
             };
             return userList;
         }

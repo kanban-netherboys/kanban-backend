@@ -19,6 +19,6 @@ namespace Kanban.Service
         Task<UsersTasksListDTO> GetAllTasksPerUser();
         Task<ResultDTO> DeleteTaskFromUser(int userId, int taskId);
         Task<ResultDTO> AddTaskToUser(TaskToUserVM taskToUser);
-        Task<TaskToUserListDTO> GetAllUsersPerTask();
+        Task<TaskWithUserListDTO> GetAllUsersPerTask();
     }
 }
