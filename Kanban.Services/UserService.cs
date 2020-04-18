@@ -218,7 +218,12 @@ namespace Kanban.Service
             List<TaskWithUserDTO> newList = new List<TaskWithUserDTO>();
             foreach (KanbanTask task in list)
             {
-                var ifHasUser = await _usertaskrepo.GetSingleEntity(x => x.KanbanTaskId == task.Id);
+                List<UserTask> ifHasUser = new List<UserTask>();
+                foreach (UserTask checkIfExists in userTaskList)
+                {
+                    if (checkIfExists.KanbanTaskId == task.Id)
+                        ifHasUser.Add(checkIfExists);
+                }
                 if (ifHasUser == null)
                 {
                     newList.Add(new TaskWithUserDTO
