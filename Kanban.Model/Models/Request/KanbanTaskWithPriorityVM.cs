@@ -1,20 +1,18 @@
-﻿using Kanban.Model.DbModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Kanban.Model
+namespace Kanban.Model.Models.Request
 {
-    public class KanbanTask : Entity
+    public class KanbanTaskWithPriorityVM
     {
         public string Title { get; set; }
         [Required]
         public string Description { get; set; }
-        [Required] 
+        [Required]
         public string Status { get; set; }
-        public int ProgressStatus { get; set; }
+        [Required]
         public int Priority { get; set; }
     }
 }
-

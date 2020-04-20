@@ -81,5 +81,22 @@ namespace Projekt_Kanban.Controllers
                 return BadRequest(result);
             return Ok("Progress status was patched");
         }
+
+        [HttpPost ("AddKanbanTaskWithPrioritity")]
+        public async Task<IActionResult> AddKanbanTaskWithPriority(KanbanTaskWithPriorityVM kanbanTaskWithPriorityVM)
+        {
+            var result = await _kanbanTaskService.AddKanbanTaskWithPriority(kanbanTaskWithPriorityVM);
+            if (result.Response != null)
+                return BadRequest(result);
+            return Ok("Task was added");
+        }
+        [HttpGet ("AllTasksWithSamePriority")]
+        public async Task<IActionResult> AllTasksWithSamePriority()
+        {
+            var taskWithProrityList = await _kanbanTaskService.AllTasksWithSamePriority();
+            if (taskWithProrityList == null)
+                return BadRequest("No tasks to show");
+            return Ok(taskWithProrityList);
+        }
     }
 }

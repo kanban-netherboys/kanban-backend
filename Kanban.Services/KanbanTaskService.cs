@@ -19,7 +19,7 @@ namespace Kanban.Services
         }
         public async Task<ResultDTO> AddKanbanTask(KanbanTaskVM addKanbanTaskVM)
         {
-            var result = new ResultDTO() 
+            var result = new ResultDTO()
             {
                 Response = null
             };
@@ -75,7 +75,7 @@ namespace Kanban.Services
                 result.Response = e.Message;
                 return result;
             }
-            return result;   
+            return result;
         }
         public async Task<ResultDTO> PatchKanbanTask(int kanbanTaskId, KanbanTaskVM patchKanbanTaskVM)
         {
@@ -149,7 +149,67 @@ namespace Kanban.Services
                 return result;
             }
             return result;
-            
+
+        }
+        public async Task<ResultDTO> AddKanbanTaskWithPriority(KanbanTaskWithPriorityVM kanbanTaskWithPriorityVM)
+        {
+            var result = new ResultDTO()
+            {
+                Response = null
+            };
+            try
+            {
+                KanbanTask task = (new KanbanTask
+                {
+                    Title = kanbanTaskWithPriorityVM.Title,
+                    Description = kanbanTaskWithPriorityVM.Description,
+                    Status = kanbanTaskWithPriorityVM.Status,
+                    Priority = kanbanTaskWithPriorityVM.Priority
+                });
+
+                if (task.Priority < 1 || task.Priority >4)
+                {
+                    result.Response = "Invalid Priority";
+                }
+                else
+                    await _repo.Add(task);
+            }
+            catch (Exception e)
+            {
+                result.Response = e.Message;
+                return result;
+            }
+            return result;
+        }
+        public async Task<TasksWithProrityListDTO> AllTasksWithSamePriority()
+        {
+            var maxStatus = 4;
+            var minStatus = 1;
+            var i = 0;
+            var taskList = await _repo.GetAll();
+            List<TasksWithProrityDTO> newList = new List<TasksWithProrityDTO>();
+            //var finalList = new TasksWithProrityListDTO();
+            for (i = minStatus; i <= maxStatus; i++)
+            {
+                TasksWithProrityDTO newTask = (new TasksWithProrityDTO
+                {
+                    Priority = i,
+                    KanbanTasksList = new List<KanbanTask>()
+                });
+                foreach (KanbanTask task in taskList)
+                {
+                    if (task.Priority == i)
+                    {
+                        newTask.KanbanTasksList.Add(task);
+                    }
+                }
+                newList.Add(newTask);
+            }
+            var finalList = new TasksWithProrityListDTO()
+            {
+                TasksList = newList
+            };
+            return finalList;
         }
     }
 }
