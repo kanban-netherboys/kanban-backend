@@ -91,6 +91,7 @@ namespace Projekt_Kanban.Controllers
                 return BadRequest(result);
             return Ok("Task was added to user");
         }
+
         [HttpGet("AllUsersPerTask")]
         public async Task<IActionResult> GetAllUsersPerTask()
         {
@@ -99,5 +100,6 @@ namespace Projekt_Kanban.Controllers
                 return BadRequest("No tasks to show");
             return Ok(userTaskList);
         }
+
     }
 }

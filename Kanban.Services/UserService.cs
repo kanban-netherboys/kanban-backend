@@ -188,20 +188,30 @@ namespace Kanban.Service
             };
             try
             {
+                var minPriority = 1;
+                var maxPriority = 4;
                 var task = (new KanbanTask
                 {
                     Title = taskToUser.Title,
                     Description = taskToUser.Description,
-                    Status = taskToUser.Status
+                    Status = taskToUser.Status,
+                    Priority = taskToUser.Priority
                 });
-                await _taskrepo.Add(task);
-                var findUser = await _repo.GetSingleEntity(x => x.Name == taskToUser.Name && x.Surname == taskToUser.Surname);
-                var usertask = new UserTask()
+                if (task.Priority < minPriority || task.Priority > maxPriority)
                 {
-                    User = findUser,
-                    KanbanTask = task
-                };
-                await _usertaskrepo.Add(usertask);
+                    result.Response = "Invalid Priority";
+                }
+                else 
+                { 
+                    await _taskrepo.Add(task);
+                    var findUser = await _repo.GetSingleEntity(x => x.Name == taskToUser.Name && x.Surname == taskToUser.Surname);
+                    var usertask = new UserTask()
+                    {
+                        User = findUser,
+                        KanbanTask = task
+                    };
+                    await _usertaskrepo.Add(usertask);
+                }
             }
             catch (Exception e)
             {

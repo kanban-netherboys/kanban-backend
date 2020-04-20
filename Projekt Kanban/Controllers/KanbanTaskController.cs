@@ -82,7 +82,7 @@ namespace Projekt_Kanban.Controllers
             return Ok("Progress status was patched");
         }
 
-        [HttpPost ("AddKanbanTaskWithPrioritity")]
+        [HttpPost ("AddKanbanTaskWithPriority")]
         public async Task<IActionResult> AddKanbanTaskWithPriority(KanbanTaskWithPriorityVM kanbanTaskWithPriorityVM)
         {
             var result = await _kanbanTaskService.AddKanbanTaskWithPriority(kanbanTaskWithPriorityVM);

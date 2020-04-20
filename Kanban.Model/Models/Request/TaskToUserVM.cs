@@ -15,5 +15,6 @@ namespace Kanban.Model.Models.Request
         public string Description { get; set; }
         [Required]
         public string Status { get; set; }
+        public int Priority { get; set; }
     }
 }
