@@ -218,6 +218,7 @@ namespace Kanban.Services
                             Title = task.Title,
                             Description = task.Description,
                             Status = task.Status,
+                            ProgressStatus = task.ProgressStatus,
                             UserList = ifHasUser
                         };
                         newTask.KanbanTasksList.Add(temp);

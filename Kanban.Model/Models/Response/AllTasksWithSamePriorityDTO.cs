@@ -12,6 +12,7 @@ namespace Kanban.Model.Models.Response
         public string Description { get; set; }
         [Required]
         public string Status { get; set; }
+        public int ProgressStatus { get; set; }
         public List<User> UserList { get; set; }
     }
 }
