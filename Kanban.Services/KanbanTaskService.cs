@@ -1,4 +1,5 @@
 ﻿using Kanban.Model;
+using Kanban.Model.DbModels;
 using Kanban.Model.Models.Request;
 using Kanban.Model.Models.Response;
 using Kanban.Repository;
@@ -12,10 +13,14 @@ namespace Kanban.Services
     public class KanbanTaskService : IKanbanTaskService
     {
         private readonly IRepository<KanbanTask> _repo;
+        private readonly IRepository<UserTask> _usertaskrepo;
+        private readonly IRepository<User> _userrepo;
 
-        public KanbanTaskService(IRepository<KanbanTask> repo)
+        public KanbanTaskService(IRepository<KanbanTask> repo, IRepository<UserTask> usertaskrepo, IRepository<User> userrepo)
         {
             _repo = repo;
+            _userrepo = userrepo;
+            _usertaskrepo = usertaskrepo;
         }
         public async Task<ResultDTO> AddKanbanTask(KanbanTaskVM addKanbanTaskVM)
         {
@@ -185,22 +190,37 @@ namespace Kanban.Services
         {
             var maxStatus = 4;
             var minStatus = 1;
-            var i = 0;
             var taskList = await _repo.GetAll();
             List<TasksWithProrityDTO> newList = new List<TasksWithProrityDTO>();
-            //var finalList = new TasksWithProrityListDTO();
-            for (i = minStatus; i <= maxStatus; i++)
+            var userTaskList = await _usertaskrepo.GetAll();
+            for (var i = minStatus; i <= maxStatus; i++)
             {
                 TasksWithProrityDTO newTask = (new TasksWithProrityDTO
                 {
                     Priority = i,
-                    KanbanTasksList = new List<KanbanTask>()
+                    KanbanTasksList = new List<AllTasksWithSamePriorityDTO>(),
                 });
                 foreach (KanbanTask task in taskList)
                 {
                     if (task.Priority == i)
                     {
-                        newTask.KanbanTasksList.Add(task);
+                        List<User> ifHasUser = new List<User>();
+                        foreach (UserTask checkIfExists in userTaskList)
+                        {
+                            if (checkIfExists.KanbanTaskId == task.Id)
+                            {
+                                var user = await _userrepo.GetSingleEntity(x => x.Id == checkIfExists.UserId);
+                                ifHasUser.Add(user);
+                            } 
+                        }
+                        var temp = new AllTasksWithSamePriorityDTO()
+                        {
+                            Title = task.Title,
+                            Description = task.Description,
+                            Status = task.Status,
+                            UserList = ifHasUser
+                        };
+                        newTask.KanbanTasksList.Add(temp);
                     }
                 }
                 newList.Add(newTask);
