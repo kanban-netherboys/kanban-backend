@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Kanban.Model.Models.Response
 {
-    public class AllTasksWithSamePriorityDTO
+    public class AllTasksWithSamePriorityDTO : Entity
     {
         public string Title { get; set; }
         public string Description { get; set; }

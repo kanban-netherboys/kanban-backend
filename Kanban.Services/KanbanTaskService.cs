@@ -215,6 +215,7 @@ namespace Kanban.Services
                         }
                         var temp = new AllTasksWithSamePriorityDTO()
                         {
+                            Id = task.Id,
                             Title = task.Title,
                             Description = task.Description,
                             Status = task.Status,
