@@ -204,13 +204,17 @@ namespace Kanban.Service
                 else 
                 { 
                     await _taskrepo.Add(task);
-                    var findUser = await _repo.GetSingleEntity(x => x.Name == taskToUser.Name && x.Surname == taskToUser.Surname);
-                    var usertask = new UserTask()
+                    var userList = taskToUser.UserList;
+                    foreach (UserWithoutIdDTO user in userList)
                     {
-                        User = findUser,
-                        KanbanTask = task
-                    };
-                    await _usertaskrepo.Add(usertask);
+                        var findUser = await _repo.GetSingleEntity(x => x.Name == user.Name && x.Surname == user.Surname);
+                        var usertask = new UserTask()
+                        {
+                            User = findUser,
+                            KanbanTask = task
+                        };
+                        await _usertaskrepo.Add(usertask);
+                    }
                 }
             }
             catch (Exception e)
