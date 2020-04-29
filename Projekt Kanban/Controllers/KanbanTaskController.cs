@@ -43,7 +43,7 @@ namespace Projekt_Kanban.Controllers
         public async Task<IActionResult> GetSingleKanbanTask(int kanbanTaskId)
         {
             var kanbanTask = await _kanbanTaskService.GetSingleKanbanTask(kanbanTaskId);
-            if (kanbanTask.SingleTask == null)
+            if (kanbanTask == null)
                 return BadRequest("Task not found");
             return Ok(kanbanTask);
         }

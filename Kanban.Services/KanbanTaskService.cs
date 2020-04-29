@@ -52,15 +52,36 @@ namespace Kanban.Services
             };
             return kanbanTaskList;
         }
-        public async Task<KanbanTaskDTO> GetSingleKanbanTask(int kanbanTaskId)
+        public async Task<TaskWithUserDTO> GetSingleKanbanTask(int kanbanTaskId)
         {
-            var kanbanTask = new KanbanTaskDTO()
-            {
-                SingleTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId)
-            };
+            var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
             if (kanbanTask == null)
                 return null;
-            return kanbanTask;
+            else
+            {
+                var userTaskList = await _usertaskrepo.GetAll();
+                var finalList = new List<UserWithoutIdDTO>();
+                foreach (UserTask userTask in userTaskList)
+                {
+                    if (userTask.KanbanTaskId == kanbanTaskId)
+                    {
+                        var user = await _userrepo.GetSingleEntity(x => x.Id == userTask.UserId);
+                        var userWithoutId = new UserWithoutIdDTO()
+                        {
+                            Name = user.Name,
+                            Surname = user.Surname
+                        };
+                        finalList.Add(userWithoutId);
+                    }
+                }
+                var finalTask = new TaskWithUserDTO()
+                {
+                    KanbanTask = kanbanTask,
+                    UserList = finalList
+                };
+                return finalTask;
+            }
+
         }
         public async Task<ResultDTO> DeleteKanbanTask(int kanbanTaskId)
         {

@@ -12,7 +12,7 @@ namespace Kanban.Services
     {
         Task<ResultDTO> AddKanbanTask(KanbanTaskVM addKanbanTaskVM);
         Task<KanbanTaskDTO> GetAllKanbanTasks();
-        Task<KanbanTaskDTO> GetSingleKanbanTask(int kanbanTaskId);
+        Task<TaskWithUserDTO> GetSingleKanbanTask(int kanbanTaskId);
         Task<ResultDTO> DeleteKanbanTask(int kanbanTaskId);
         Task<ResultDTO> PatchKanbanTask(int kanbanTaskId, KanbanTaskVM patchKanbanTaskVM);
         Task<ResultDTO> PatchStatus(int kanbanTaskId, PatchKanbanTaskVM patchSingleKanbanTaskVM);
