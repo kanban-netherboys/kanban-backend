@@ -249,5 +249,47 @@ namespace Kanban.Services
             };
             return finalList;
         }
+        public async Task<ResultDTO> PatchBlockedStatus(int kanbanTaskId, bool blockedStatus)
+        {
+            var result = new ResultDTO()
+            {
+                Response = null
+            };
+            try
+            {
+                var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
+                if (kanbanTask == null)
+                    result.Response = "Task not found";
+                kanbanTask.Blocked = blockedStatus;
+                await _repo.Patch(kanbanTask);
+            }
+            catch (Exception e)
+            {
+                result.Response = e.Message;
+                return result;
+            }
+            return result;
+        }
+        public async Task<ResultDTO> PatchColor(int kanbanTaskId, string color)
+        {
+            var result = new ResultDTO()
+            {
+                Response = null
+            };
+            try
+            {
+                var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
+                if (kanbanTask == null)
+                    result.Response = "Task not found";
+                kanbanTask.Color = color;
+                await _repo.Patch(kanbanTask);
+            }
+            catch (Exception e)
+            {
+                result.Response = e.Message;
+                return result;
+            }
+            return result;
+        }
     }
 }

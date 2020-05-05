@@ -11,10 +11,12 @@ namespace Kanban.Model
         public string Title { get; set; }
         [Required]
         public string Description { get; set; }
-        [Required] 
+        [Required]
         public string Status { get; set; }
         public int ProgressStatus { get; set; }
         public int Priority { get; set; }
+        public bool Blocked { get; set; } = false;
+        public string Color { get; set; } = "default";
     }
 }
 

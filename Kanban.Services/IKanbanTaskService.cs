@@ -19,5 +19,7 @@ namespace Kanban.Services
         Task<ResultDTO> PatchProgressStatus(int kanbanTaskId, PatchProgressStatusVM progressStatusVM);
         Task<ResultDTO> AddKanbanTaskWithPriority(KanbanTaskWithPriorityVM kanbanTaskWithPriorityVM);
         Task<TasksWithProrityListDTO> AllTasksWithSamePriority();
+        Task<ResultDTO> PatchBlockedStatus(int kanbanTaskId, bool blockedStatus);
+        Task<ResultDTO> PatchColor(int kanbanTaskId, string color);
     }
 }

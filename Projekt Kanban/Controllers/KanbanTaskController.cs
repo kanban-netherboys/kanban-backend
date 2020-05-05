@@ -98,5 +98,21 @@ namespace Projekt_Kanban.Controllers
                 return BadRequest("No tasks to show");
             return Ok(taskWithProrityList);
         }
+        [HttpPatch ("PatchBlockedStatus")]
+        public async Task<IActionResult> PatchBlockedStatus(int kanbanTaskId, bool blockedStatus)
+        {
+            var result = await _kanbanTaskService.PatchBlockedStatus(kanbanTaskId, blockedStatus);
+            if (result.Response != null)
+                return BadRequest(result);
+            return Ok("Blocked status was patched");
+        }
+        [HttpPatch("PatchColor")]
+        public async Task<IActionResult> PatchColor(int kanbanTaskId, string color)
+        {
+            var result = await _kanbanTaskService.PatchColor(kanbanTaskId, color);
+            if (result.Response != null)
+                return BadRequest(result);
+            return Ok("Color was patched");
+        }
     }
 }
