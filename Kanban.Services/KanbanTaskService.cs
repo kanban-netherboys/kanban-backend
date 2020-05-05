@@ -236,7 +236,9 @@ namespace Kanban.Services
                             Description = task.Description,
                             Status = task.Status,
                             ProgressStatus = task.ProgressStatus,
-                            UserList = ifHasUser
+                            UserList = ifHasUser,
+                            Blocked = task.Blocked,
+                            Color = task.Color
                         };
                         newTask.KanbanTasksList.Add(temp);
                     }
