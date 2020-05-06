@@ -180,7 +180,7 @@ namespace Kanban.Service
             }
             return result;
         }
-        public async Task<ResultDTO> AddTaskToUser(TaskToUserVM taskToUser)
+        public async Task<ResultDTO> AddTaskWithUser(TaskToUserVM taskToUser)
         {
             var result = new ResultDTO()
             {
@@ -195,7 +195,9 @@ namespace Kanban.Service
                     Title = taskToUser.Title,
                     Description = taskToUser.Description,
                     Status = taskToUser.Status,
-                    Priority = taskToUser.Priority
+                    Priority = taskToUser.Priority,
+                    Color = taskToUser.Color,
+                    Blocked = taskToUser.Blocked
                 });
                 if (task.Priority < minPriority || task.Priority > maxPriority)
                 {
@@ -275,5 +277,63 @@ namespace Kanban.Service
             };
             return userList;
         }
+        public async Task<ResultDTO> PatchTaskWithUser(TaskWithUsersVM taskToUser)
+        {
+            var result = new ResultDTO()
+            {
+                Response = null
+            };
+            try
+            {
+                var task = await _taskrepo.GetSingleEntity(x => x.Id == taskToUser.Id);
+                if (task != null)
+                {
+                    if (taskToUser.Title != null)
+                        task.Title = taskToUser.Title;
+                    if (taskToUser.Description != null)
+                        task.Description = taskToUser.Description;
+                    if (taskToUser.Status != null)
+                        task.Status = taskToUser.Status;
+                    if (taskToUser.Color != null)
+                        task.Color = taskToUser.Color;
+                    if (taskToUser.Blocked != null)
+                        task.Blocked = taskToUser.Blocked;
+                    await _taskrepo.Patch(task);
+
+                    var UserTaskList = await _usertaskrepo.GetAll();
+                    foreach (UserTask userTask in UserTaskList)
+                    {
+                        if (userTask.KanbanTaskId == task.Id)
+                        {
+                            await _usertaskrepo.Delete(userTask);
+                        }
+                    }
+                    foreach (UserWithoutIdDTO user in taskToUser.UserList)
+                    {
+                        var findUser = await _repo.GetSingleEntity(x => x.Name == user.Name && x.Surname == user.Surname);
+                        if (findUser != null)
+                        {
+                            var usertask = new UserTask()
+                            {
+                                User = findUser,
+                                KanbanTask = task
+                            };
+                            await _usertaskrepo.Add(usertask);
+                        }
+                        else
+                            result.Response = "Task was patched, but one of the users does not exist";
+                    }
+                }
+                else
+                    result.Response = "Task does not exist";
+            }
+            catch (Exception e)
+            {
+                result.Response = e.Message;
+                return result;
+            }
+            return result;
+        }
+
     }
 }

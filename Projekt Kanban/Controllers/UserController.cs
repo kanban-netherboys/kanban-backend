@@ -83,10 +83,10 @@ namespace Projekt_Kanban.Controllers
                 return BadRequest(result);
             return Ok("Task was deleted from user");
         }
-        [HttpPost("AddTaskToUser")]
-        public async Task<IActionResult> AddTaskToUser(TaskToUserVM taskToUser)
+        [HttpPost("AddTaskWithUser")]
+        public async Task<IActionResult> AddTaskWithUser(TaskToUserVM taskToUser)
         {
-            var result = await _userService.AddTaskToUser(taskToUser);
+            var result = await _userService.AddTaskWithUser(taskToUser);
             if (result.Response != null)
                 return BadRequest(result);
             return Ok("Task was added to user");
@@ -99,6 +99,15 @@ namespace Projekt_Kanban.Controllers
             if (userTaskList == null)
                 return BadRequest("No tasks to show");
             return Ok(userTaskList);
+        }
+
+        [HttpPatch("PatchTaskWithUser")]
+        public async Task<IActionResult> PatchTaskWithUser(TaskWithUsersVM taskToUser)
+        {
+            var result = await _userService.PatchTaskWithUser(taskToUser);
+            if (result.Response != null)
+                return BadRequest(result);
+            return Ok("Task was patched");
         }
 
     }
