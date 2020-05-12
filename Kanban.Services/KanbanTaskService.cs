@@ -12,69 +12,40 @@ namespace Kanban.Services
 {
     public class KanbanTaskService : IKanbanTaskService
     {
-        private readonly IRepository<KanbanTask> _repo;
+        private readonly IRepository<KanbanTask> _kanbantaskrepo;
         private readonly IRepository<UserTask> _usertaskrepo;
         private readonly IRepository<User> _userrepo;
 
         public KanbanTaskService(IRepository<KanbanTask> repo, IRepository<UserTask> usertaskrepo, IRepository<User> userrepo)
         {
-            _repo = repo;
+            _kanbantaskrepo = repo;
             _userrepo = userrepo;
             _usertaskrepo = usertaskrepo;
         }
-        public async Task<ResultDTO> AddKanbanTask(KanbanTaskVM addKanbanTaskVM)
+
+        public async Task<TaskWIthUsersDTO> GetSingleKanbanTask(int kanbanTaskId)
         {
-            var result = new ResultDTO()
-            {
-                Response = null
-            };
-            try
-            {
-                await _repo.Add(new KanbanTask
-                {
-                    Title = addKanbanTaskVM.Title,
-                    Description = addKanbanTaskVM.Description,
-                    Status = addKanbanTaskVM.Status
-                });
-            }
-            catch (Exception e)
-            {
-                result.Response = e.Message;
-                return result;
-            }
-            return result;
-        }
-        public async Task<KanbanTaskDTO> GetAllKanbanTasks()
-        {
-            var kanbanTaskList = new KanbanTaskDTO()
-            {
-                KanbanList = await _repo.GetAll()
-            };
-            return kanbanTaskList;
-        }
-        public async Task<TaskWIthUserWithIdDTO> GetSingleKanbanTask(int kanbanTaskId)
-        {
-            var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
+            var kanbanTask = await _kanbantaskrepo.GetSingleEntity(x => x.Id == kanbanTaskId);
             if (kanbanTask == null)
                 return null;
             else
             {
                 var userTaskList = await _usertaskrepo.GetAll();
-                var finalList = new List<User>();
+                var usersList = new List<User>();
                 foreach (UserTask userTask in userTaskList)
                 {
                     if (userTask.KanbanTaskId == kanbanTaskId)
                     {
                         var user = await _userrepo.GetSingleEntity(x => x.Id == userTask.UserId);
-                        finalList.Add(user);
+                        usersList.Add(user);
                     }
                 }
-                var finalTask = new TaskWIthUserWithIdDTO()
+                var finalKanbanTask = new TaskWIthUsersDTO()
                 {
                     KanbanTask = kanbanTask,
-                    UserList = finalList
+                    UserList = usersList
                 };
-                return finalTask;
+                return finalKanbanTask;
             }
 
         }
@@ -86,10 +57,10 @@ namespace Kanban.Services
             };
             try
             {
-                var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
+                var kanbanTask = await _kanbantaskrepo.GetSingleEntity(x => x.Id == kanbanTaskId);
                 if (kanbanTask == null)
                     result.Response = "Task not found";
-                await _repo.Delete(kanbanTask);
+                await _kanbantaskrepo.Delete(kanbanTask);
             }
             catch (Exception e)
             {
@@ -98,7 +69,7 @@ namespace Kanban.Services
             }
             return result;
         }
-        public async Task<ResultDTO> PatchKanbanTask(int kanbanTaskId, KanbanTaskVM patchKanbanTaskVM)
+        public async Task<ResultDTO> PatchStatus(int kanbanTaskId, PatchKanbanTaskStatusVM patchKanbanTaskStatusVM)
         {
             var result = new ResultDTO()
             {
@@ -106,16 +77,12 @@ namespace Kanban.Services
             };
             try
             {
-                var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
+                var kanbanTask = await _kanbantaskrepo.GetSingleEntity(x => x.Id == kanbanTaskId);
                 if (kanbanTask == null)
                     result.Response = "Task not found";
-                if (patchKanbanTaskVM.Title != null)
-                    kanbanTask.Title = patchKanbanTaskVM.Title;
-                if (patchKanbanTaskVM.Description != null)
-                    kanbanTask.Description = patchKanbanTaskVM.Description;
-                if (patchKanbanTaskVM.Status != null)
-                    kanbanTask.Status = patchKanbanTaskVM.Status;
-                await _repo.Patch(kanbanTask);
+                if (patchKanbanTaskStatusVM.Status != null)
+                    kanbanTask.Status = patchKanbanTaskStatusVM.Status;
+                await _kanbantaskrepo.Patch(kanbanTask);
             }
             catch (Exception e)
             {
@@ -124,7 +91,7 @@ namespace Kanban.Services
             }
             return result;
         }
-        public async Task<ResultDTO> PatchStatus(int kanbanTaskId, PatchKanbanTaskVM patchSingleKanbanTask)
+        public async Task<ResultDTO> PatchProgressStatus(int kanbanTaskId, PatchKanbanTaskProgressStatusVM progressStatusVM)
         {
             var result = new ResultDTO()
             {
@@ -132,68 +99,14 @@ namespace Kanban.Services
             };
             try
             {
-                var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
-                if (kanbanTask == null)
-                    result.Response = "Task not found";
-                if (patchSingleKanbanTask.Status != null)
-                    kanbanTask.Status = patchSingleKanbanTask.Status;
-                await _repo.Patch(kanbanTask);
-            }
-            catch (Exception e)
-            {
-                result.Response = e.Message;
-                return result;
-            }
-            return result;
-        }
-
-        public async Task<ResultDTO> PatchProgressStatus(int kanbanTaskId, PatchProgressStatusVM progressStatusVM)
-        {
-            var result = new ResultDTO()
-            {
-                Response = null
-            };
-            try
-            {
-                var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
+                var kanbanTask = await _kanbantaskrepo.GetSingleEntity(x => x.Id == kanbanTaskId);
                 if (kanbanTask == null)
                     result.Response = "Task not found";
                 if (progressStatusVM.ProgressStatus < 6)
                     kanbanTask.ProgressStatus = progressStatusVM.ProgressStatus;
                 else
                     result.Response = "Progress Status not found";
-                await _repo.Patch(kanbanTask);
-            }
-            catch (Exception e)
-            {
-                result.Response = e.Message;
-                return result;
-            }
-            return result;
-
-        }
-        public async Task<ResultDTO> AddKanbanTaskWithPriority(KanbanTaskWithPriorityVM kanbanTaskWithPriorityVM)
-        {
-            var result = new ResultDTO()
-            {
-                Response = null
-            };
-            try
-            {
-                KanbanTask task = (new KanbanTask
-                {
-                    Title = kanbanTaskWithPriorityVM.Title,
-                    Description = kanbanTaskWithPriorityVM.Description,
-                    Status = kanbanTaskWithPriorityVM.Status,
-                    Priority = kanbanTaskWithPriorityVM.Priority
-                });
-
-                if (task.Priority < 1 || task.Priority >4)
-                {
-                    result.Response = "Invalid Priority";
-                }
-                else
-                    await _repo.Add(task);
+                await _kanbantaskrepo.Patch(kanbanTask);
             }
             catch (Exception e)
             {
@@ -202,32 +115,32 @@ namespace Kanban.Services
             }
             return result;
         }
-        public async Task<TasksWithProrityListDTO> AllTasksWithSamePriority()
+        public async Task<PriorityWithAllTasksListDTO> AllTasksWithSamePriority()
         {
-            var maxStatus = 4;
-            var minStatus = 1;
-            var taskList = await _repo.GetAll();
-            List<TasksWithProrityDTO> newList = new List<TasksWithProrityDTO>();
+            var maxPriority = 4;
+            var minPriority = 1;
+            var kanbanTaskList = await _kanbantaskrepo.GetAll();
+            List<PriorityWithAllTasksDTO> priorityWithAllTasksListList = new List<PriorityWithAllTasksDTO>();
             var userTaskList = await _usertaskrepo.GetAll();
-            for (var i = minStatus; i <= maxStatus; i++)
+            for (var i = minPriority; i <= maxPriority; i++)
             {
-                TasksWithProrityDTO newTask = (new TasksWithProrityDTO
+                PriorityWithAllTasksDTO priorityWithAllTasks = (new PriorityWithAllTasksDTO
                 {
                     Priority = i,
                     KanbanTasksList = new List<AllTasksWithSamePriorityDTO>(),
                 });
-                foreach (KanbanTask task in taskList)
+                foreach (KanbanTask task in kanbanTaskList)
                 {
                     if (task.Priority == i)
                     {
-                        List<User> ifHasUser = new List<User>();
-                        foreach (UserTask checkIfExists in userTaskList)
+                        List<User> userList = new List<User>();
+                        foreach (UserTask userTask in userTaskList)
                         {
-                            if (checkIfExists.KanbanTaskId == task.Id)
+                            if (userTask.KanbanTaskId == task.Id)
                             {
-                                var user = await _userrepo.GetSingleEntity(x => x.Id == checkIfExists.UserId);
-                                ifHasUser.Add(user);
-                            } 
+                                var user = await _userrepo.GetSingleEntity(x => x.Id == userTask.UserId);
+                                userList.Add(user);
+                            }
                         }
                         var temp = new AllTasksWithSamePriorityDTO()
                         {
@@ -236,62 +149,159 @@ namespace Kanban.Services
                             Description = task.Description,
                             Status = task.Status,
                             ProgressStatus = task.ProgressStatus,
-                            UserList = ifHasUser,
+                            UserList = userList,
                             Blocked = task.Blocked,
                             Color = task.Color
                         };
-                        newTask.KanbanTasksList.Add(temp);
+                        priorityWithAllTasks.KanbanTasksList.Add(temp);
                     }
                 }
-                newList.Add(newTask);
+                priorityWithAllTasksListList.Add(priorityWithAllTasks);
             }
-            var finalList = new TasksWithProrityListDTO()
+            var allPriorityWithAllTasksList = new PriorityWithAllTasksListDTO()
             {
-                TasksList = newList
+                TasksList = priorityWithAllTasksListList
             };
-            return finalList;
+            return allPriorityWithAllTasksList;
         }
-        public async Task<ResultDTO> PatchBlockedStatus(int kanbanTaskId, bool blockedStatus)
-        {
-            var result = new ResultDTO()
-            {
-                Response = null
-            };
-            try
-            {
-                var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
-                if (kanbanTask == null)
-                    result.Response = "Task not found";
-                kanbanTask.Blocked = blockedStatus;
-                await _repo.Patch(kanbanTask);
-            }
-            catch (Exception e)
-            {
-                result.Response = e.Message;
-                return result;
-            }
-            return result;
-        }
-        public async Task<ResultDTO> PatchColor(int kanbanTaskId, string color)
-        {
-            var result = new ResultDTO()
-            {
-                Response = null
-            };
-            try
-            {
-                var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
-                if (kanbanTask == null)
-                    result.Response = "Task not found";
-                kanbanTask.Color = color;
-                await _repo.Patch(kanbanTask);
-            }
-            catch (Exception e)
-            {
-                result.Response = e.Message;
-                return result;
-            }
-            return result;
-        }
+
+
+        //-------------------------------- Funkcje używane do poprzednich etapów projektu -------------------------
+
+
+
+        //public async Task<ResultDTO> AddKanbanTask(KanbanTaskVM addKanbanTaskVM)
+        //{
+        //    var result = new ResultDTO()
+        //    {
+        //        Response = null
+        //    };
+        //    try
+        //    {
+        //        await _repo.Add(new KanbanTask
+        //        {
+        //            Title = addKanbanTaskVM.Title,
+        //            Description = addKanbanTaskVM.Description,
+        //            Status = addKanbanTaskVM.Status
+        //        });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        result.Response = e.Message;
+        //        return result;
+        //    }
+        //    return result;
+        //}
+        //public async Task<KanbanTaskDTO> GetAllKanbanTasks()
+        //{
+        //    var kanbanTaskList = new KanbanTaskDTO()
+        //    {
+        //        KanbanList = await _repo.GetAll()
+        //    };
+        //    return kanbanTaskList;
+        //}
+
+        //public async Task<ResultDTO> PatchKanbanTask(int kanbanTaskId, KanbanTaskVM patchKanbanTaskVM)
+        //{
+        //    var result = new ResultDTO()
+        //    {
+        //        Response = null
+        //    };
+        //    try
+        //    {
+        //        var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
+        //        if (kanbanTask == null)
+        //            result.Response = "Task not found";
+        //        if (patchKanbanTaskVM.Title != null)
+        //            kanbanTask.Title = patchKanbanTaskVM.Title;
+        //        if (patchKanbanTaskVM.Description != null)
+        //            kanbanTask.Description = patchKanbanTaskVM.Description;
+        //        if (patchKanbanTaskVM.Status != null)
+        //            kanbanTask.Status = patchKanbanTaskVM.Status;
+        //        await _repo.Patch(kanbanTask);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        result.Response = e.Message;
+        //        return result;
+        //    }
+        //    return result;
+        //}
+
+        //public async Task<ResultDTO> AddKanbanTaskWithPriority(KanbanTaskWithPriorityVM kanbanTaskWithPriorityVM)
+        //{
+        //    var result = new ResultDTO()
+        //    {
+        //        Response = null
+        //    };
+        //    try
+        //    {
+        //        KanbanTask task = (new KanbanTask
+        //        {
+        //            Title = kanbanTaskWithPriorityVM.Title,
+        //            Description = kanbanTaskWithPriorityVM.Description,
+        //            Status = kanbanTaskWithPriorityVM.Status,
+        //            Priority = kanbanTaskWithPriorityVM.Priority
+        //        });
+
+        //        if (task.Priority < 1 || task.Priority >4)
+        //        {
+        //            result.Response = "Invalid Priority";
+        //        }
+        //        else
+        //            await _repo.Add(task);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        result.Response = e.Message;
+        //        return result;
+        //    }
+        //    return result;
+        //}
+
+        //public async Task<ResultDTO> PatchBlockedStatus(int kanbanTaskId, bool blockedStatus)
+        //{
+        //    var result = new ResultDTO()
+        //    {
+        //        Response = null
+        //    };
+        //    try
+        //    {
+        //        var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
+        //        if (kanbanTask == null)
+        //            result.Response = "Task not found";
+        //        kanbanTask.Blocked = blockedStatus;
+        //        await _repo.Patch(kanbanTask);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        result.Response = e.Message;
+        //        return result;
+        //    }
+        //    return result;
+        //}
+
+
+        //public async Task<ResultDTO> PatchColor(int kanbanTaskId, string color)
+        //{
+        //    var result = new ResultDTO()
+        //    {
+        //        Response = null
+        //    };
+        //    try
+        //    {
+        //        var kanbanTask = await _repo.GetSingleEntity(x => x.Id == kanbanTaskId);
+        //        if (kanbanTask == null)
+        //            result.Response = "Task not found";
+        //        kanbanTask.Color = color;
+        //        await _repo.Patch(kanbanTask);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        result.Response = e.Message;
+        //        return result;
+        //    }
+        //    return result;
+        //}
     }
 }

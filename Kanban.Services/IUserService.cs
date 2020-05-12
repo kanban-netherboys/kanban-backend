@@ -10,16 +10,21 @@ namespace Kanban.Service
 {
     public interface IUserService
     {
-        Task<ResultDTO> AddUser(UserVM userVM);
+        Task<ResultDTO> AddUser(UserWithoutIdVM userVM);
         Task<UserDTO> GetAllUsers();
-        Task<UserDTO> GetSingleUser(int userId);
-        Task<ResultDTO> DeleteUser(int userId);
-        Task<ResultDTO> PatchUser(int userId, UserVM userVM);
-        Task<ResultDTO> AssignTaskToUser(int taskId, int userId);
-        Task<UsersTasksListDTO> GetAllTasksPerUser();
-        Task<ResultDTO> DeleteTaskFromUser(int userId, int taskId);
-        Task<ResultDTO> AddTaskWithUser(TaskToUserVM taskToUser);
-        Task<TaskWithUserListDTO> GetAllUsersPerTask();
-        Task<ResultDTO> PatchTaskWithUser(TaskWithUsersVM taskToUser);
+        Task<ResultDTO> AddTaskWithUser(AddTaskWithUserVM addTaskWithUserVM);
+        Task<ResultDTO> PatchTaskWithUser(TaskWithUsersVM taskToUsersVM);
+
+        //------------------------------ Interfejsy używane do poprzednich etapów projektu --------------------------
+
+
+        // Task<UserDTO> GetSingleUser(int userId);
+        //Task<ResultDTO> DeleteUser(int userId);
+        // Task<ResultDTO> PatchUser(int userId, UserVM userVM);
+        // Task<ResultDTO> AssignTaskToUser(int taskId, int userId);
+        //  Task<UsersTasksListDTO> GetAllTasksPerUser();
+        //   Task<ResultDTO> DeleteTaskFromUser(int userId, int taskId);
+        //  Task<TaskWithUserListDTO> GetAllUsersPerTask();
+
     }
 }

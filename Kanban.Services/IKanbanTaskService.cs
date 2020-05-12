@@ -10,16 +10,20 @@ namespace Kanban.Services
 {
     public interface IKanbanTaskService
     {
-        Task<ResultDTO> AddKanbanTask(KanbanTaskVM addKanbanTaskVM);
-        Task<KanbanTaskDTO> GetAllKanbanTasks();
-        Task<TaskWIthUserWithIdDTO> GetSingleKanbanTask(int kanbanTaskId);
+        Task<TaskWIthUsersDTO> GetSingleKanbanTask(int kanbanTaskId);
         Task<ResultDTO> DeleteKanbanTask(int kanbanTaskId);
-        Task<ResultDTO> PatchKanbanTask(int kanbanTaskId, KanbanTaskVM patchKanbanTaskVM);
-        Task<ResultDTO> PatchStatus(int kanbanTaskId, PatchKanbanTaskVM patchSingleKanbanTaskVM);
-        Task<ResultDTO> PatchProgressStatus(int kanbanTaskId, PatchProgressStatusVM progressStatusVM);
-        Task<ResultDTO> AddKanbanTaskWithPriority(KanbanTaskWithPriorityVM kanbanTaskWithPriorityVM);
-        Task<TasksWithProrityListDTO> AllTasksWithSamePriority();
-        Task<ResultDTO> PatchBlockedStatus(int kanbanTaskId, bool blockedStatus);
-        Task<ResultDTO> PatchColor(int kanbanTaskId, string color);
+        Task<ResultDTO> PatchStatus(int kanbanTaskId, PatchKanbanTaskStatusVM patchKanbanTaskStatusVM);
+        Task<ResultDTO> PatchProgressStatus(int kanbanTaskId, PatchKanbanTaskProgressStatusVM progressStatusVM);
+        Task<PriorityWithAllTasksListDTO> AllTasksWithSamePriority();
+
+        //------------------------------ Interfejsy używane do poprzednich etapów projektu --------------------------
+
+
+        //  Task<ResultDTO> AddKanbanTask(KanbanTaskVM addKanbanTaskVM);
+        //  Task<KanbanTaskDTO> GetAllKanbanTasks();
+        //   Task<ResultDTO> PatchKanbanTask(int kanbanTaskId, KanbanTaskVM patchKanbanTaskVM);
+        //  Task<ResultDTO> AddKanbanTaskWithPriority(KanbanTaskWithPriorityVM kanbanTaskWithPriorityVM);
+        //  Task<ResultDTO> PatchBlockedStatus(int kanbanTaskId, bool blockedStatus);
+        // Task<ResultDTO> PatchColor(int kanbanTaskId, string color);
     }
 }

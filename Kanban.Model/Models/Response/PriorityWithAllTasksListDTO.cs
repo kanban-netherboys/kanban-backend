@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Kanban.Model.Models.Response
 {
-    public class TasksWithProrityListDTO
+    public class PriorityWithAllTasksListDTO
     {
-        public List<TasksWithProrityDTO> TasksList { get; set; }
+        public List<PriorityWithAllTasksDTO> TasksList { get; set; }
     }
 }

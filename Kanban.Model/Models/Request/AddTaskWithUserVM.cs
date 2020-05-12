@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Kanban.Model.Models.Request
 {
-    public class TaskToUserVM
+    public class AddTaskWithUserVM
     {
 
         public List<UserWithoutIdDTO> UserList { get; set; }

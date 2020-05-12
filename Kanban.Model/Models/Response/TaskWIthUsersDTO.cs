@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Kanban.Model.Models.Response
 {
-    public class TaskWIthUserWithIdDTO
+    public class TaskWIthUsersDTO
     {
         public KanbanTask KanbanTask { get; set; }
         public List<User> UserList { get; set; }

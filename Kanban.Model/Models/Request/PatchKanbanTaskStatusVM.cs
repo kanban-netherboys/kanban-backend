@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Kanban.Model.Models.Request
 {
-    public class PatchProgressStatusVM
+    public class PatchKanbanTaskStatusVM
     {
         [Required]
-        public int ProgressStatus { get; set; }
+        public string Status { get; set; }
     }
 }
