@@ -14,7 +14,7 @@ namespace Kanban.Services
         Task<ResultDTO> DeleteKanbanTask(int kanbanTaskId);
         Task<ResultDTO> PatchStatus(int kanbanTaskId, PatchKanbanTaskStatusVM patchKanbanTaskStatusVM);
         Task<ResultDTO> PatchProgressStatus(int kanbanTaskId, PatchKanbanTaskProgressStatusVM progressStatusVM);
-        Task<PriorityWithAllTasksListDTO> AllTasksWithSamePriority();
+        Task<PriorityWithAllTasksListDTO> GetTasksByPriority();
 
         //------------------------------ Interfejsy używane do poprzednich etapów projektu --------------------------
 

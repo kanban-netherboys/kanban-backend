@@ -115,7 +115,7 @@ namespace Kanban.Services
             }
             return result;
         }
-        public async Task<PriorityWithAllTasksListDTO> AllTasksWithSamePriority()
+        public async Task<PriorityWithAllTasksListDTO> GetTasksByPriority()
         {
             var maxPriority = 4;
             var minPriority = 1;

@@ -54,10 +54,10 @@ namespace Projekt_Kanban.Controllers
                 return BadRequest(result);
             return Ok("Progress status was patched");
         }
-        [HttpGet("AllTasksWithSamePriority")]
-        public async Task<IActionResult> AllTasksWithSamePriority()
+        [HttpGet("GetTasksByPriority")]
+        public async Task<IActionResult> GetTasksByPriority()
         {
-            var taskWithProrityList = await _kanbanTaskService.AllTasksWithSamePriority();
+            var taskWithProrityList = await _kanbanTaskService.GetTasksByPriority();
             if (taskWithProrityList == null)
                 return BadRequest("No tasks to show");
             return Ok(taskWithProrityList);
