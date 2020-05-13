@@ -23,33 +23,7 @@ namespace Kanban.Services
             _usertaskrepo = usertaskrepo;
         }
 
-        public async Task<TaskWIthUsersDTO> GetSingleKanbanTask(int kanbanTaskId)
-        {
-            var kanbanTask = await _kanbantaskrepo.GetSingleEntity(x => x.Id == kanbanTaskId);
-            if (kanbanTask == null)
-                return null;
-            else
-            {
-                var userTaskList = await _usertaskrepo.GetAll();
-                var usersList = new List<User>();
-                foreach (UserTask userTask in userTaskList)
-                {
-                    if (userTask.KanbanTaskId == kanbanTaskId)
-                    {
-                        var user = await _userrepo.GetSingleEntity(x => x.Id == userTask.UserId);
-                        usersList.Add(user);
-                    }
-                }
-                var finalKanbanTask = new TaskWIthUsersDTO()
-                {
-                    KanbanTask = kanbanTask,
-                    UserList = usersList
-                };
-                return finalKanbanTask;
-            }
-
-        }
-        public async Task<ResultDTO> DeleteKanbanTask(int kanbanTaskId)
+        public async Task<ResultDTO> AddTaskWithUser(AddTaskWithUserVM addTaskWithUserVM)
         {
             var result = new ResultDTO()
             {
@@ -57,10 +31,36 @@ namespace Kanban.Services
             };
             try
             {
-                var kanbanTask = await _kanbantaskrepo.GetSingleEntity(x => x.Id == kanbanTaskId);
-                if (kanbanTask == null)
-                    result.Response = "Task not found";
-                await _kanbantaskrepo.Delete(kanbanTask);
+                var minPriority = 1;
+                var maxPriority = 4;
+                var task = (new KanbanTask
+                {
+                    Title = addTaskWithUserVM.Title,
+                    Description = addTaskWithUserVM.Description,
+                    Status = addTaskWithUserVM.Status,
+                    Priority = addTaskWithUserVM.Priority,
+                    Color = addTaskWithUserVM.Color,
+                    Blocked = addTaskWithUserVM.Blocked
+                });
+                if (task.Priority < minPriority || task.Priority > maxPriority)
+                {
+                    result.Response = "Invalid Priority";
+                }
+                else
+                {
+                    await _kanbantaskrepo.Add(task);
+                    var userList = addTaskWithUserVM.UserList;
+                    foreach (UserWithoutIdDTO user in userList)
+                    {
+                        var findUser = await _userrepo.GetSingleEntity(x => x.Name == user.Name && x.Surname == user.Surname);
+                        var usertask = new UserTask()
+                        {
+                            User = findUser,
+                            KanbanTask = task
+                        };
+                        await _usertaskrepo.Add(usertask);
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -69,6 +69,7 @@ namespace Kanban.Services
             }
             return result;
         }
+
         public async Task<ResultDTO> PatchStatus(int kanbanTaskId, PatchKanbanTaskStatusVM patchKanbanTaskStatusVM)
         {
             var result = new ResultDTO()
@@ -91,6 +92,7 @@ namespace Kanban.Services
             }
             return result;
         }
+
         public async Task<ResultDTO> PatchProgressStatus(int kanbanTaskId, PatchKanbanTaskProgressStatusVM progressStatusVM)
         {
             var result = new ResultDTO()
@@ -115,6 +117,90 @@ namespace Kanban.Services
             }
             return result;
         }
+        public async Task<ResultDTO> PatchTaskWithUser(TaskWithUsersVM taskToUsersVM)
+        {
+            var result = new ResultDTO()
+            {
+                Response = null
+            };
+            try
+            {
+                var task = await _kanbantaskrepo.GetSingleEntity(x => x.Id == taskToUsersVM.Id);
+                if (task != null)
+                {
+                    if (taskToUsersVM.Title != null)
+                        task.Title = taskToUsersVM.Title;
+                    if (taskToUsersVM.Description != null)
+                        task.Description = taskToUsersVM.Description;
+                    if (taskToUsersVM.Status != null)
+                        task.Status = taskToUsersVM.Status;
+                    if (taskToUsersVM.Color != null)
+                        task.Color = taskToUsersVM.Color;
+                    if (taskToUsersVM.Blocked != null)
+                        task.Blocked = taskToUsersVM.Blocked;
+                    await _kanbantaskrepo.Patch(task);
+
+                    var userTaskList = await _usertaskrepo.GetAll();
+                    foreach (UserTask userTask in userTaskList)
+                    {
+                        if (userTask.KanbanTaskId == task.Id)
+                        {
+                            await _usertaskrepo.Delete(userTask);
+                        }
+                    }
+                    foreach (UserWithoutIdDTO user in taskToUsersVM.UserList)
+                    {
+                        var findUser = await _userrepo.GetSingleEntity(x => x.Name == user.Name && x.Surname == user.Surname);
+                        if (findUser != null)
+                        {
+                            var usertask = new UserTask()
+                            {
+                                User = findUser,
+                                KanbanTask = task
+                            };
+                            await _usertaskrepo.Add(usertask);
+                        }
+                        else
+                            result.Response = "Task was patched, but one of the users does not exist";
+                    }
+                }
+                else
+                    result.Response = "Task does not exist";
+            }
+            catch (Exception e)
+            {
+                result.Response = e.Message;
+                return result;
+            }
+            return result;
+        }
+
+        public async Task<TaskWIthUsersDTO> GetSingleKanbanTask(int kanbanTaskId)
+        {
+            var kanbanTask = await _kanbantaskrepo.GetSingleEntity(x => x.Id == kanbanTaskId);
+            if (kanbanTask == null)
+                return null;
+            else
+            {
+                var userTaskList = await _usertaskrepo.GetAll();
+                var usersList = new List<User>();
+                foreach (UserTask userTask in userTaskList)
+                {
+                    if (userTask.KanbanTaskId == kanbanTaskId)
+                    {
+                        var user = await _userrepo.GetSingleEntity(x => x.Id == userTask.UserId);
+                        usersList.Add(user);
+                    }
+                }
+                var finalKanbanTask = new TaskWIthUsersDTO()
+                {
+                    KanbanTask = kanbanTask,
+                    UserList = usersList
+                };
+                return finalKanbanTask;
+            }
+        }
+
         public async Task<PriorityWithAllTasksListDTO> GetTasksByPriority()
         {
             var maxPriority = 4;
@@ -164,7 +250,32 @@ namespace Kanban.Services
             };
             return allPriorityWithAllTasksList;
         }
+        public async Task<ResultDTO> DeleteKanbanTask(int kanbanTaskId)
+        {
+            var result = new ResultDTO()
+            {
+                Response = null
+            };
+            try
+            {
+                var kanbanTask = await _kanbantaskrepo.GetSingleEntity(x => x.Id == kanbanTaskId);
+                if (kanbanTask == null)
+                    result.Response = "Task not found";
+                await _kanbantaskrepo.Delete(kanbanTask);
+            }
+            catch (Exception e)
+            {
+                result.Response = e.Message;
+                return result;
+            }
+            return result;
+        }
+        
+       
 
+        
+
+       
 
         //-------------------------------- Funkcje używane do poprzednich etapów projektu -------------------------
 

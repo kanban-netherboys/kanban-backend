@@ -28,6 +28,16 @@ namespace Projekt_Kanban.Controllers
                 return BadRequest(result);
             return Ok("User was added");
         }
+
+        [HttpPatch ("PatchUser")]
+        public async Task<IActionResult> PatchUser(int userId, UserWithoutIdVM userWithoutIdVM)
+        {
+            var result = await _userService.PatchUser(userId, userWithoutIdVM);
+            if (result.Response != null)
+                return BadRequest(result);
+            return Ok("User was patched");
+        }
+
         [HttpGet("GetAllUsers")]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -36,21 +46,14 @@ namespace Projekt_Kanban.Controllers
                 return BadRequest("No users to show");
             return Ok(userList);
         }
-        [HttpPost("AddTaskWithUser")]
-        public async Task<IActionResult> AddTaskWithUser(AddTaskWithUserVM taskToUser)
+
+        [HttpDelete ("DeleteUser")]
+        public async Task<IActionResult> DeleteUser(int userId)
         {
-            var result = await _userService.AddTaskWithUser(taskToUser);
+            var result = await _userService.DeleteUser(userId);
             if (result.Response != null)
                 return BadRequest(result);
-            return Ok("Task was added to user");
-        }
-        [HttpPatch("PatchTaskWithUser")]
-        public async Task<IActionResult> PatchTaskWithUser(TaskWithUsersVM taskToUser)
-        {
-            var result = await _userService.PatchTaskWithUser(taskToUser);
-            if (result.Response != null)
-                return BadRequest(result);
-            return Ok("Task was patched");
+            return Ok("User was deleted");
         }
 
         // --------------- Endpointy używane do poprzednich etapów projektu -------------------------------------------
@@ -64,23 +67,7 @@ namespace Projekt_Kanban.Controllers
         //    return Ok(singleUser);
         //}
 
-        //[HttpDelete]
-        //public async Task<IActionResult> DeleteUser(int userId)
-        //{
-        //    var result = await _userService.DeleteUser(userId);
-        //    if (result.Response != null)
-        //        return BadRequest(result);
-        //    return Ok("User was deleted");
-        //}
 
-        //[HttpPatch]
-        //public async Task<IActionResult> PatchUser(int userId, UserVM userVM)
-        //{
-        //    var result = await _userService.PatchUser(userId, userVM);
-        //    if (result.Response != null)
-        //        return BadRequest(result);
-        //    return Ok("User was patched");
-        //}
 
         //[HttpPost("AssignTaskToUser")]
         //public async Task<IActionResult> AssignTaskToUser(int taskId, int userId)

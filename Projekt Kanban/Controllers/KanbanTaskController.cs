@@ -22,22 +22,15 @@ namespace Projekt_Kanban.Controllers
             _kanbanTaskService = kanbanTaskService;
         }
 
-        [HttpGet("GetSingleTask")]
-        public async Task<IActionResult> GetSingleKanbanTask(int kanbanTaskId)
+        [HttpPost("AddTaskWithUser")]
+        public async Task<IActionResult> AddTaskWithUser(AddTaskWithUserVM taskToUser)
         {
-            var kanbanTask = await _kanbanTaskService.GetSingleKanbanTask(kanbanTaskId);
-            if (kanbanTask == null)
-                return BadRequest("Task not found");
-            return Ok(kanbanTask);
-        }
-        [HttpDelete("DeleteTask")]
-        public async Task<IActionResult> DeleteKanbanTask(int kanbanTaskId)
-        {
-            var result = await _kanbanTaskService.DeleteKanbanTask(kanbanTaskId);
+            var result = await _kanbanTaskService.AddTaskWithUser(taskToUser);
             if (result.Response != null)
-                return BadRequest("Task not found");
-            return Ok("Task was deleted");
+                return BadRequest(result);
+            return Ok("Task was added to user");
         }
+
         [HttpPatch("PatchTaskStatus")]
         public async Task<IActionResult> PatchStatus(int kanbanTaskId, PatchKanbanTaskStatusVM patchKanbanTaskStatusVM)
         {
@@ -46,6 +39,7 @@ namespace Projekt_Kanban.Controllers
                 return BadRequest(result);
             return Ok("Task status was patched");
         }
+
         [HttpPatch("PatchTaskProgressStatus")]
         public async Task<IActionResult> PatchProgressStatus(int kanbanTaskId, PatchKanbanTaskProgressStatusVM progressStatusVM)
         {
@@ -54,6 +48,25 @@ namespace Projekt_Kanban.Controllers
                 return BadRequest(result);
             return Ok("Progress status was patched");
         }
+
+        [HttpPatch("PatchTaskWithUser")]
+        public async Task<IActionResult> PatchTaskWithUser(TaskWithUsersVM taskToUser)
+        {
+            var result = await _kanbanTaskService.PatchTaskWithUser(taskToUser);
+            if (result.Response != null)
+                return BadRequest(result);
+            return Ok("Task was patched");
+        }
+
+        [HttpGet("GetSingleTask")]
+        public async Task<IActionResult> GetSingleKanbanTask(int kanbanTaskId)
+        {
+            var kanbanTask = await _kanbanTaskService.GetSingleKanbanTask(kanbanTaskId);
+            if (kanbanTask == null)
+                return BadRequest("Task not found");
+            return Ok(kanbanTask);
+        }
+
         [HttpGet("GetTasksByPriority")]
         public async Task<IActionResult> GetTasksByPriority()
         {
@@ -63,6 +76,17 @@ namespace Projekt_Kanban.Controllers
             return Ok(taskWithProrityList);
         }
 
+        [HttpDelete("DeleteTask")]
+        public async Task<IActionResult> DeleteKanbanTask(int kanbanTaskId)
+        {
+            var result = await _kanbanTaskService.DeleteKanbanTask(kanbanTaskId);
+            if (result.Response != null)
+                return BadRequest("Task not found");
+            return Ok("Task was deleted");
+        }
+       
+      
+     
 
         // --------------- Endpointy używane do poprzednich etapów projektu -------------------------------------------
 

@@ -44,16 +44,8 @@ namespace Kanban.Service
             }
             return result;
         }
-        public async Task<UserDTO> GetAllUsers()
-        {
-            var userList = new UserDTO()
-            {
-                UserList = await _userrepo.GetAll()
-            };
-            return userList;
-        }
 
-        public async Task<ResultDTO> AddTaskWithUser(AddTaskWithUserVM addTaskWithUserVM)
+        public async Task<ResultDTO> PatchUser(int userId, UserWithoutIdVM userWithoutIdVM)
         {
             var result = new ResultDTO()
             {
@@ -61,36 +53,14 @@ namespace Kanban.Service
             };
             try
             {
-                var minPriority = 1;
-                var maxPriority = 4;
-                var task = (new KanbanTask
-                {
-                    Title = addTaskWithUserVM.Title,
-                    Description = addTaskWithUserVM.Description,
-                    Status = addTaskWithUserVM.Status,
-                    Priority = addTaskWithUserVM.Priority,
-                    Color = addTaskWithUserVM.Color,
-                    Blocked = addTaskWithUserVM.Blocked
-                });
-                if (task.Priority < minPriority || task.Priority > maxPriority)
-                {
-                    result.Response = "Invalid Priority";
-                }
-                else
-                {
-                    await _kanbantaskrepo.Add(task);
-                    var userList = addTaskWithUserVM.UserList;
-                    foreach (UserWithoutIdDTO user in userList)
-                    {
-                        var findUser = await _userrepo.GetSingleEntity(x => x.Name == user.Name && x.Surname == user.Surname);
-                        var usertask = new UserTask()
-                        {
-                            User = findUser,
-                            KanbanTask = task
-                        };
-                        await _usertaskrepo.Add(usertask);
-                    }
-                }
+                var user = await _userrepo.GetSingleEntity(x => x.Id == userId);
+                if (user == null)
+                    result.Response = "User not found";
+                if (userWithoutIdVM.Name != null)
+                    user.Name = userWithoutIdVM.Name;
+                if (userWithoutIdVM.Surname != null)
+                    user.Surname = userWithoutIdVM.Surname;
+                await _userrepo.Patch(user);
             }
             catch (Exception e)
             {
@@ -100,7 +70,16 @@ namespace Kanban.Service
             return result;
         }
 
-        public async Task<ResultDTO> PatchTaskWithUser(TaskWithUsersVM taskToUsersVM)
+        public async Task<UserDTO> GetAllUsers()
+        {
+            var userList = new UserDTO()
+            {
+                UserList = await _userrepo.GetAll()
+            };
+            return userList;
+        }
+
+        public async Task<ResultDTO> DeleteUser(int userId)
         {
             var result = new ResultDTO()
             {
@@ -108,47 +87,10 @@ namespace Kanban.Service
             };
             try
             {
-                var task = await _kanbantaskrepo.GetSingleEntity(x => x.Id == taskToUsersVM.Id);
-                if (task != null)
-                {
-                    if (taskToUsersVM.Title != null)
-                        task.Title = taskToUsersVM.Title;
-                    if (taskToUsersVM.Description != null)
-                        task.Description = taskToUsersVM.Description;
-                    if (taskToUsersVM.Status != null)
-                        task.Status = taskToUsersVM.Status;
-                    if (taskToUsersVM.Color != null)
-                        task.Color = taskToUsersVM.Color;
-                    if (taskToUsersVM.Blocked != null)
-                        task.Blocked = taskToUsersVM.Blocked;
-                    await _kanbantaskrepo.Patch(task);
-
-                    var userTaskList = await _usertaskrepo.GetAll();
-                    foreach (UserTask userTask in userTaskList)
-                    {
-                        if (userTask.KanbanTaskId == task.Id)
-                        {
-                            await _usertaskrepo.Delete(userTask);
-                        }
-                    }
-                    foreach (UserWithoutIdDTO user in taskToUsersVM.UserList)
-                    {
-                        var findUser = await _userrepo.GetSingleEntity(x => x.Name == user.Name && x.Surname == user.Surname);
-                        if (findUser != null)
-                        {
-                            var usertask = new UserTask()
-                            {
-                                User = findUser,
-                                KanbanTask = task
-                            };
-                            await _usertaskrepo.Add(usertask);
-                        }
-                        else
-                            result.Response = "Task was patched, but one of the users does not exist";
-                    }
-                }
-                else
-                    result.Response = "Task does not exist";
+                var user = await _userrepo.GetSingleEntity(x => x.Id == userId);
+                if (user == null)
+                    result.Response = "User not found";
+                await _userrepo.Delete(user);
             }
             catch (Exception e)
             {
@@ -173,51 +115,7 @@ namespace Kanban.Service
         //    return user;
         //}
 
-        //public async Task<ResultDTO> DeleteUser(int userId)
-        //{
-        //    var result = new ResultDTO()
-        //    {
-        //        Response = null
-        //    };
-        //    try
-        //    {
-        //        var user = await _repo.GetSingleEntity(x => x.Id == userId);
-        //        if (user == null)
-        //            result.Response = "User not found";
-        //        await _repo.Delete(user);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        result.Response = e.Message;
-        //        return result;
-        //    }
-        //    return result;
-        //}
-
-        //public async Task<ResultDTO> PatchUser(int userId, UserVM userVM)
-        //{
-        //    var result = new ResultDTO()
-        //    {
-        //        Response = null
-        //    };
-        //    try
-        //    {
-        //        var user = await _repo.GetSingleEntity(x => x.Id == userId);
-        //        if (user == null)
-        //            result.Response = "User not found";
-        //        if (userVM.Name != null)
-        //            user.Name = userVM.Name;
-        //        if (userVM.Surname != null)
-        //            user.Surname = userVM.Surname;
-        //        await _repo.Patch(user);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        result.Response = e.Message;
-        //        return result;
-        //    }
-        //    return result;
-        //}
+       
 
         //public async Task<ResultDTO> AssignTaskToUser(int taskId, int userId)
         //{

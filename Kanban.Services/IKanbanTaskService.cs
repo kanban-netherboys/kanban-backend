@@ -10,11 +10,17 @@ namespace Kanban.Services
 {
     public interface IKanbanTaskService
     {
-        Task<TaskWIthUsersDTO> GetSingleKanbanTask(int kanbanTaskId);
-        Task<ResultDTO> DeleteKanbanTask(int kanbanTaskId);
+        Task<ResultDTO> AddTaskWithUser(AddTaskWithUserVM addTaskWithUserVM);
         Task<ResultDTO> PatchStatus(int kanbanTaskId, PatchKanbanTaskStatusVM patchKanbanTaskStatusVM);
         Task<ResultDTO> PatchProgressStatus(int kanbanTaskId, PatchKanbanTaskProgressStatusVM progressStatusVM);
+        Task<ResultDTO> PatchTaskWithUser(TaskWithUsersVM taskToUsersVM);
+        Task<TaskWIthUsersDTO> GetSingleKanbanTask(int kanbanTaskId);
         Task<PriorityWithAllTasksListDTO> GetTasksByPriority();
+        Task<ResultDTO> DeleteKanbanTask(int kanbanTaskId);
+
+        
+        
+        
 
         //------------------------------ Interfejsy używane do poprzednich etapów projektu --------------------------
 
